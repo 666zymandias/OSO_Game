@@ -1,1 +1,3 @@
-Juego del Oso + Chat en Java Netbeans jdk-17
+# Juego OSO
+### Netbeans jdk-17
+Juego del Oso + Chat en linea
