@@ -159,17 +159,19 @@ public class osoGameIndividualGUI extends javax.swing.JFrame implements ActionLi
     }//GEN-LAST:event_startButtonActionPerformed
 
     private void enviarButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_enviarButtonActionPerformed
-        int x = botonOsoActual.getFila();
-        int y = botonOsoActual.getColumna();
-        String letra = botonOsoActual.getText();
-        botonOsoActual.setLetra(letra);
-        Jugada jugada = new Jugada(x, y, letra);
-        partidaOso.realizaJugada(jugada);
-        int numOsos = partidaOso.getNumOsos();
-        fieldNumOsos.setText(String.valueOf(numOsos));
-        partidaOso.imprimeTablero();
-        botonOsoActual.setEnabled(false);
-        botonOsoActual = null;
+        if (botonOsoActual != null) {
+            int x = botonOsoActual.getFila();
+            int y = botonOsoActual.getColumna();
+            String letra = botonOsoActual.getText();
+            botonOsoActual.setLetra(letra);
+            Jugada jugada = new Jugada(x, y, letra);
+            partidaOso.realizaJugada(jugada);
+            int numOsos = partidaOso.getNumOsos();
+            fieldNumOsos.setText(String.valueOf(numOsos));
+            partidaOso.imprimeTablero();
+            botonOsoActual.setEnabled(false);
+            botonOsoActual = null;
+        }
     }//GEN-LAST:event_enviarButtonActionPerformed
 
     public static void main(String args[]) {
