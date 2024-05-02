@@ -1,4 +1,4 @@
-# Juego OSO por Jaider Felipe Santos Garzón
+# Juego del OSO por Jaider Felipe Santos Garzón
 ## Netbeans jdk-17
 ### Implementado en ordenador propio
 #### Instrucciones
