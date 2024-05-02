@@ -1,6 +1,7 @@
 
 package oso.game;
 
+import java.util.InputMismatchException;
 import java.util.Scanner;
 import oso.core.Jugada;
 import oso.core.Partida;
@@ -14,17 +15,36 @@ public class osoGameConsole {
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
         String cadena;
-        
-        System.out.println("Introduce el numero de filas: ");
-        int filas = sc.nextInt();
-        System.out.println("Introduce el numero de columnas: ");
-        int columnas = sc.nextInt();
+        int filas = 0, columnas = 0;
+        boolean entradaValida = false;
+
+        while (!entradaValida) {
+            try {
+                System.out.println("Introduce el numero de filas: ");
+                filas = sc.nextInt();
+                if (filas > 0)
+                    entradaValida = true; 
+            } catch (InputMismatchException e) {
+                sc.next(); // Limpiar el buffer del scanner
+            }
+        }
+        entradaValida = false;
+        while (!entradaValida) {
+            try {
+                System.out.println("Introduce el numero de columnas: ");
+                columnas = sc.nextInt();
+                if (columnas > 0)
+                    entradaValida = true; 
+            } catch (InputMismatchException e) {
+                sc.next(); // Limpiar el buffer del scanner
+            }
+        }
         
         Partida alone = new Partida(filas, columnas);
+        alone.imprimeTablero();
         System.out.println("Introduce 'salir' para finalizar juego");
         
         while(!alone.finPartida()) {
-            System.out.println("Numero de osos: " +alone.getNumOsos());
             System.out.println("Introduce tu jugada (formato: <x>,<y>,<letra>");
             cadena = sc.next();
             if (cadena.equals("salir"))
@@ -33,10 +53,14 @@ public class osoGameConsole {
                 int x = cadena.charAt(0) - '0';
                 int y = cadena.charAt(2) - '0';
                 char letra = cadena.charAt(4);
+                letra = Character.toUpperCase(letra);
+                char coma1 = cadena.charAt(1);
+                char coma2 = cadena.charAt(3);
+                if (coma1 != ',' || coma2 != ',' || x < 0 || x >= filas || y < 0 || y >= columnas || (letra != 'S' && letra != 'O')) {
+                    continue;
+                }
                 Jugada jugada = new Jugada(x, y, Character.toString(letra));
                 alone.realizaJugada(jugada);
-                alone.imprimeTablero();
-                System.out.println("Numero de osos: " +alone.getNumOsos());
             }
         }   
     }
