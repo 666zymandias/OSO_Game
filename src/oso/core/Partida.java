@@ -193,7 +193,7 @@ public class Partida {
         if (esValida(jugada)) {
             int x = jugada.getFila();
             int y = jugada.getColumna();
-            char letra =  jugada.getLetra().charAt(0);
+            char letra =  jugada.getLetra();
             ponPieza(jugada.getFila(), jugada.getColumna(), letra);
             numOsos += contarOsosDesdeCasilla(x, y, letra);
             imprimeTablero();

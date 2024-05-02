@@ -46,7 +46,7 @@
                       <Component id="labelOsos" min="-2" max="-2" attributes="0"/>
                       <EmptySpace min="-2" pref="4" max="-2" attributes="0"/>
                       <Component id="fieldNumOsos" min="-2" pref="34" max="-2" attributes="0"/>
-                      <EmptySpace type="separate" max="-2" attributes="0"/>
+                      <EmptySpace max="32767" attributes="0"/>
                       <Component id="enviarButton" min="-2" max="-2" attributes="0"/>
                   </Group>
               </Group>

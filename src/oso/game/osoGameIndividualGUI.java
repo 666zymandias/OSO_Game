@@ -107,7 +107,7 @@ public class osoGameIndividualGUI extends javax.swing.JFrame implements ActionLi
                         .addComponent(labelOsos)
                         .addGap(4, 4, 4)
                         .addComponent(fieldNumOsos, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(enviarButton)))
                 .addContainerGap())
         );
@@ -164,7 +164,7 @@ public class osoGameIndividualGUI extends javax.swing.JFrame implements ActionLi
             int y = botonOsoActual.getColumna();
             String letra = botonOsoActual.getText();
             botonOsoActual.setLetra(letra);
-            Jugada jugada = new Jugada(x, y, letra);
+            Jugada jugada = new Jugada(x, y, letra.charAt(0));
             partidaOso.realizaJugada(jugada);
             int numOsos = partidaOso.getNumOsos();
             fieldNumOsos.setText(String.valueOf(numOsos));

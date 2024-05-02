@@ -11,9 +11,9 @@ package oso.core;
 public class Jugada {
     private int fila;
     private int columna;
-    private String letra;
+    private char letra;
 
-    public Jugada(int fila, int columna, String letra) {
+    public Jugada(int fila, int columna, char letra) {
         this.fila = fila;
         this.columna = columna;
         this.letra = letra;
@@ -27,7 +27,7 @@ public class Jugada {
         return columna;
     }
 
-    public String getLetra() {
+    public char getLetra() {
         return letra;
     }
 
@@ -39,7 +39,7 @@ public class Jugada {
         this.columna = columna;
     }
 
-    public void setLetra(String letra) {
+    public void setLetra(char letra) {
         this.letra = letra;
     }
     

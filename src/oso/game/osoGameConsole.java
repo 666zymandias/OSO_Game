@@ -59,7 +59,7 @@ public class osoGameConsole {
                 if (coma1 != ',' || coma2 != ',' || x < 0 || x >= filas || y < 0 || y >= columnas || (letra != 'S' && letra != 'O')) {
                     continue;
                 }
-                Jugada jugada = new Jugada(x, y, Character.toString(letra));
+                Jugada jugada = new Jugada(x, y, letra);
                 alone.realizaJugada(jugada);
             }
         }   
