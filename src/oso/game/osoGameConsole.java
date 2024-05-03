@@ -18,7 +18,7 @@ public class osoGameConsole {
             try {
                 System.out.println("Introduce el numero de filas: ");
                 filas = sc.nextInt();
-                if (filas > 0)
+                if (filas > 2)
                     entradaValida = true; 
             } catch (InputMismatchException e) {
                 sc.next(); // Limpiar el buffer del scanner
@@ -29,7 +29,7 @@ public class osoGameConsole {
             try {
                 System.out.println("Introduce el numero de columnas: ");
                 columnas = sc.nextInt();
-                if (columnas > 0)
+                if (columnas > 2)
                     entradaValida = true; 
             } catch (InputMismatchException e) {
                 sc.next(); // Limpiar el buffer del scanner

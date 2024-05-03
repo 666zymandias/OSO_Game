@@ -7,10 +7,6 @@ package oso.core;
 import java.util.HashSet;
 import java.util.Set;
 
-/**
- *
- * @author felipe
- */
 public class Tablero {
     private final Casilla[][] matrizOsos;
     private final Set<Casilla> casillasJugada = new HashSet<>();
@@ -69,7 +65,7 @@ public class Tablero {
         }
                 
         else {
-            osos+= cuentaOsosO(x, y, filas, columnas);
+            osos += cuentaOsosO(x, y, filas, columnas);
         }
         return osos;
     }

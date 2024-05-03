@@ -218,11 +218,15 @@ public class osoGameIndividualGUI extends javax.swing.JFrame implements ActionLi
             partidaOso = new Partida(filas, columnas);
             panelJuego.setLayout(new GridLayout(filas,columnas));
             
+            int sizeLetra = 0;
+            if (filas*columnas < 81) 
+                sizeLetra = 30;
+            else    
+                sizeLetra = 15;
             for (int i = 0; i < filas; i++) {
                 for (int j = 0; j < columnas; j++) {
                     BotonOso botonOso = new BotonOso(i, j);
-                    botonOso.setFont(new Font("Arial", Font.PLAIN, 30));
-                        
+                    botonOso.setFont(new Font("Arial", Font.PLAIN, sizeLetra));
                     botonOso.addActionListener(this);
                     panelJuego.add(botonOso);
                 }

@@ -4,10 +4,6 @@
  */
 package oso.core;
 
-/**
- *
- * @author felipe
- */
 public class Jugada {
     private int fila;
     private int columna;
