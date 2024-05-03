@@ -1,6 +1,9 @@
 
 package oso.core;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  *
  * @author hydfe
@@ -8,6 +11,7 @@ package oso.core;
 public class Partida {
     private final Casilla[][] tablero;
     private int numOsos;
+    private List<Casilla> casillasJugada = new ArrayList<>();
 
     public Partida(int filas, int columnas) {
         this.tablero = new Casilla[filas][columnas];
@@ -16,9 +20,9 @@ public class Partida {
     }
     
     private void init() {
-        for (Casilla[] tablero1 : tablero) {
+        for (int i = 0; i < tablero.length; i++) {
             for (int j = 0; j < tablero[0].length; j++) {
-                tablero1[j] = new Casilla(' ');
+                tablero[i][j] = new Casilla(' ', i, j);
             }
         }
     }
@@ -74,36 +78,37 @@ public class Partida {
             if (0 < y && y < columnas - 1 && tablero[x][y-1].isValida() && tablero[x][y+1].isValida()) {
                 if (tablero[x][y-1].getValor() == 'O' && tablero[x][y+1].getValor() == 'O') {
                     osos++;
-                    tablero[x][y].setValida(false);
-                    tablero[x][y-1].setValida(false);
-                    tablero[x][y+1].setValida(false);
+                    casillasJugada.add(tablero[x][y]);
+                    casillasJugada.add(tablero[x][y-1]);
+                    casillasJugada.add(tablero[x][y+1]);
                 }
             }
             
             if (0 < x && x < filas - 1 && tablero[x-1][y].isValida() && tablero[x+1][y].isValida()) {
                 if (tablero[x-1][y].getValor() == 'O' && tablero[x+1][y].getValor() == 'O') {
                     osos++;
-                    tablero[x][y].setValida(false);
-                    tablero[x-1][y].setValida(false);
-                    tablero[x+1][y].setValida(false);
+                    casillasJugada.add(tablero[x][y]);
+                    casillasJugada.add(tablero[x-1][y+1]);
+                    casillasJugada.add(tablero[x+1][y]);
                 }
             }
             
             if (0 < x && 0 < y && y < columnas - 1 && x < filas - 1 && tablero[x-1][y-1].isValida() && tablero[x+1][y+1].isValida()) {
                 if (tablero[x-1][y-1].getValor() == 'O' && tablero[x+1][y+1].getValor() == 'O') {
                     osos++;
-                    tablero[x][y].setValida(false);
-                    tablero[x-1][y-1].setValida(false);
-                    tablero[x+1][y+1].setValida(false);
+                    casillasJugada.add(tablero[x][y]);
+                    casillasJugada.add(tablero[x-1][y-1]);
+                    casillasJugada.add(tablero[x+1][y+1]);
                 }
             }
             
             if (0 < x && 0 < y && y < columnas - 1 && x < filas - 1 && tablero[x-1][y+1].isValida() && tablero[x+1][y-1].isValida()) {
                 if (tablero[x-1][y+1].getValor() == 'O' && tablero[x+1][y-1].getValor() == 'O') {
                     osos++;
-                    tablero[x][y].setValida(false);
-                    tablero[x-1][y+1].setValida(false);
-                    tablero[x+1][y-1].setValida(false);
+                    
+                    casillasJugada.add(tablero[x][y]);
+                    casillasJugada.add(tablero[x-1][y+1]);
+                    casillasJugada.add(tablero[x+1][y-1]);
                 }
             }
             
@@ -114,18 +119,19 @@ public class Partida {
             if (1 < y && tablero[x][y-1].isValida() && tablero[x][y-2].isValida()) {
                 if (tablero[x][y-1].getValor() == 'S' && tablero[x][y-2].getValor() == 'O') {
                     osos++;
-                    tablero[x][y].setValida(false);
-                    tablero[x][y-1].setValida(false);
-                    tablero[x][y-2].setValida(false);
+                    casillasJugada.add(tablero[x][y]);
+                    casillasJugada.add(tablero[x][y-1]);
+                    casillasJugada.add(tablero[x][y-2]);
                 }
             }
             
             if (y < columnas - 2 && tablero[x][y+1].isValida() && tablero[x][y+2].isValida()) {
                 if (tablero[x][y+1].getValor() == 'S' && tablero[x][y+2].getValor() == 'O') {
                     osos++;
-                    tablero[x][y].setValida(false);
-                    tablero[x][y+1].setValida(false);
-                    tablero[x][y+2].setValida(false);
+                    
+                    casillasJugada.add(tablero[x][y]);
+                    casillasJugada.add(tablero[x][y+1]);
+                    casillasJugada.add(tablero[x][y+21]);
                 }
             }
             
@@ -142,9 +148,9 @@ public class Partida {
             if (x < filas - 2 && tablero[x+1][y].isValida() && tablero[x+2][y].isValida()) {
                 if (tablero[x+1][y].getValor() == 'S' && tablero[x+2][y].getValor() == 'O') {
                     osos++;
-                    tablero[x][y].setValida(false);
-                    tablero[x+1][y].setValida(false);
-                    tablero[x+2][y].setValida(false);
+                    casillasJugada.add(tablero[x][y]);
+                    casillasJugada.add(tablero[x][y-1]);
+                    casillasJugada.add(tablero[x][y+1]);
                 }
             }
             
@@ -152,36 +158,36 @@ public class Partida {
             if (1 < x && 1 < y && tablero[x-1][y-1].isValida() && tablero[x-2][y-2].isValida()) {
                 if (tablero[x-1][y-1].getValor() == 'S' && tablero[x-2][y-2].getValor() == 'O') {
                     osos++;
-                    tablero[x][y].setValida(false);
-                    tablero[x-1][y-1].setValida(false);
-                    tablero[x-2][y-2].setValida(false);
+                    casillasJugada.add(tablero[x][y]);
+                    casillasJugada.add(tablero[x-1][y-1]);
+                    casillasJugada.add(tablero[x-2][y-2]);
                 }
             }
             
             if (x < filas - 2 && y < columnas - 2 && tablero[x+1][y+1].isValida() && tablero[x+2][y+2].isValida()) {
                 if (tablero[x+1][y+1].getValor() == 'S' && tablero[x+2][y+2].getValor() == 'O') {
                     osos++;
-                    tablero[x][y].setValida(false);
-                    tablero[x+1][y+1].setValida(false);
-                    tablero[x+2][y+2].setValida(false);
+                    casillasJugada.add(tablero[x][y]);
+                    casillasJugada.add(tablero[x+1][y+1]);
+                    casillasJugada.add(tablero[x+2][y+2]);
                 }
             }
             
             if (1 < x && y < columnas - 2 && tablero[x-1][y+1].isValida() && tablero[x-2][y+2].isValida()) {
                 if (tablero[x-1][y+1].getValor() == 'S' && tablero[x-2][y+2].getValor() == 'O') {
                     osos++;
-                    tablero[x][y].setValida(false);
-                    tablero[x-1][y+1].setValida(false);
-                    tablero[x-2][y+2].setValida(false);
+                    casillasJugada.add(tablero[x][y]);
+                    casillasJugada.add(tablero[x-1][y+1]);
+                    casillasJugada.add(tablero[x-2][y+2]);
                 }
             }
             
             if (1 < y && x < filas - 2 && tablero[x+1][y-1].isValida() && tablero[x+2][y-2].isValida()) {
                 if (tablero[x+1][y-1].getValor() == 'S' && tablero[x+2][y-2].getValor() == 'O') {
                     osos++;
-                    tablero[x][y].setValida(false);
-                    tablero[x+1][y-1].setValida(false);
-                    tablero[x+2][y-2].setValida(false);
+                    casillasJugada.add(tablero[x][y]);
+                    casillasJugada.add(tablero[x+1][y-1]);
+                    casillasJugada.add(tablero[x+2][y-2]);
                 }
             }
             
@@ -200,6 +206,14 @@ public class Partida {
         }
         else
             System.out.println("Jugada invalida, pon tu pieza en una casilla libre!");
+    }
+
+    public List<Casilla> getCasillasJugada() {
+        return casillasJugada;
+    }
+    
+    public void vaciaLista() {
+        casillasJugada.clear();
     }
     
 }

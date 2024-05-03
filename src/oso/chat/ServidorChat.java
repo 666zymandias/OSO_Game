@@ -32,7 +32,7 @@ public class ServidorChat extends Thread{
             // repeatedly wait for connections
             while(! interrupted() ){
                 Socket clientSocket = serverSocket.accept();
-                ClientThread clientThread = new ClientThread(clients, clientSocket);
+                ClientThread clientThread = new ClientThread(clientSocket);
                 clientThread.start();
             }
         }catch(Exception ex){
@@ -40,12 +40,10 @@ public class ServidorChat extends Thread{
     }
     
     public class ClientThread extends Thread{
-        final List<ClientThread> clients;
         final Socket socket;
         DataOutputStream out;
 
-        public ClientThread(List<ClientThread> clients, Socket socket) {
-            this.clients = clients;
+        public ClientThread(Socket socket) {
             this.socket = socket;
         }
         

@@ -11,9 +11,13 @@ package oso.core;
 public class Casilla {
     private char valor;
     private boolean Valida;
+    private int x;
+    private int y;
 
-    public Casilla(char valor) {
+    public Casilla(char valor, int x, int y) {
         this.valor = valor;
+        this.x = x;
+        this.y = y;
         this.Valida = true;
     }
 
@@ -32,9 +36,18 @@ public class Casilla {
     public void setValida(boolean Valida) {
         this.Valida = Valida;
     }
+
+    public int getX() {
+        return x;
+    }
+
+    public int getY() {
+        return y;
+    }  
     
     @Override
     public String toString() {
         return String.valueOf(getValor());
     }
+    
 }

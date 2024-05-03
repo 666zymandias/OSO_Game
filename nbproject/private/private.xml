@@ -2,6 +2,13 @@
 <project-private xmlns="http://www.netbeans.org/ns/project-private/1">
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
-        <group/>
+        <group>
+            <file>file:/home/felipe/Escritorio/archivos-con-git/Santos_Garzon_Felipe_OSO/src/oso/core/Partida.java</file>
+            <file>file:/home/felipe/Escritorio/archivos-con-git/Santos_Garzon_Felipe_OSO/src/oso/game/osoGameIndividualGUI.java</file>
+            <file>file:/home/felipe/Escritorio/archivos-con-git/Santos_Garzon_Felipe_OSO/src/oso/core/Jugada.java</file>
+            <file>file:/home/felipe/Escritorio/archivos-con-git/Santos_Garzon_Felipe_OSO/src/oso/game/osoGameConsole.java</file>
+            <file>file:/home/felipe/Escritorio/archivos-con-git/Santos_Garzon_Felipe_OSO/src/oso/core/Casilla.java</file>
+            <file>file:/home/felipe/Escritorio/archivos-con-git/Santos_Garzon_Felipe_OSO/src/oso/core/PanelOso.java</file>
+        </group>
     </open-files>
 </project-private>
