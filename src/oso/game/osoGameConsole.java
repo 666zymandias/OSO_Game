@@ -6,10 +6,6 @@ import java.util.Scanner;
 import oso.core.Jugada;
 import oso.core.Partida;
 
-/**
- *
- * @author hydfe
- */
 public class osoGameConsole {
     
     public static void main(String[] args) {
@@ -41,11 +37,11 @@ public class osoGameConsole {
         }
         
         Partida alone = new Partida(filas, columnas);
-        alone.imprimeTablero();
+        alone.imprimeEstadoPartida();
         System.out.println("Introduce 'salir' para finalizar juego");
         
         while(!alone.finPartida()) {
-            System.out.println("Introduce tu jugada (formato: <x>,<y>,<letra>");
+            System.out.println("Introduce tu jugada (formato: <x>,<y>,<letra>)");
             cadena = sc.next();
             if (cadena.equals("salir"))
                 break;
@@ -61,8 +57,12 @@ public class osoGameConsole {
                 }
                 Jugada jugada = new Jugada(x, y, letra);
                 alone.realizaJugada(jugada);
+                alone.getTablero().bloqueaJugada();
             }
         }   
+        
+        System.out.println("Fin de partida!");
+        System.out.println("Total de OSOs conseguidos: "+ alone.getNumOsos());
     }
     
 }

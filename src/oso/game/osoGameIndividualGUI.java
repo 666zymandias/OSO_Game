@@ -6,8 +6,11 @@ import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.UIManager;
@@ -18,15 +21,11 @@ import oso.core.Casilla;
 import oso.core.Jugada;
 import oso.core.Partida;
 
-/**
- *
- * @author alumno
- */
 public class osoGameIndividualGUI extends javax.swing.JFrame implements ActionListener {
 
     private BotonOso ultimoBotonOso, botonOsoActual;
     private Partida partidaOso;
-    private List<BotonOso> listaBotones = new ArrayList();
+    private final List<BotonOso> listaBotonesJugada = new ArrayList<>();
     
     public osoGameIndividualGUI() {
         initComponents();
@@ -35,6 +34,12 @@ public class osoGameIndividualGUI extends javax.swing.JFrame implements ActionLi
         
         setLocationRelativeTo(null);
         dialogFinPartida.setLocationRelativeTo(this);
+        dialogFinPartida.addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                disposeJuego();
+            }
+        });
     }
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
@@ -42,8 +47,8 @@ public class osoGameIndividualGUI extends javax.swing.JFrame implements ActionLi
 
         dialogFinPartida = new javax.swing.JDialog();
         labelFinPartida = new javax.swing.JLabel();
-        jButton1 = new javax.swing.JButton();
-        labelResultado = new javax.swing.JLabel();
+        labelResultados = new javax.swing.JLabel();
+        botonFinal = new javax.swing.JButton();
         panelJuego = new javax.swing.JPanel();
         startButton = new javax.swing.JButton();
         fieldFilas = new javax.swing.JTextField();
@@ -54,49 +59,52 @@ public class osoGameIndividualGUI extends javax.swing.JFrame implements ActionLi
         fieldNumOsos = new javax.swing.JTextField();
         enviarButton = new javax.swing.JButton();
 
-        dialogFinPartida.setTitle("Fin de partida");
-        dialogFinPartida.setBackground(new java.awt.Color(255, 255, 255));
-        dialogFinPartida.setMinimumSize(new java.awt.Dimension(375, 189));
-        dialogFinPartida.setPreferredSize(new java.awt.Dimension(200, 150));
+        dialogFinPartida.setMinimumSize(new java.awt.Dimension(300, 150));
+        dialogFinPartida.setPreferredSize(new java.awt.Dimension(300, 150));
         dialogFinPartida.setResizable(false);
 
-        labelFinPartida.setFont(new java.awt.Font("Liberation Sans", 0, 18)); // NOI18N
-        labelFinPartida.setText("Fin partida!");
+        labelFinPartida.setFont(new java.awt.Font("sansserif", 0, 16)); // NOI18N
+        labelFinPartida.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        labelFinPartida.setText("Fin de Partida!");
 
-        jButton1.setText("vale");
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
+        labelResultados.setFont(new java.awt.Font("sansserif", 0, 16)); // NOI18N
+        labelResultados.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        labelResultados.setText("Total OSOs: ");
+
+        botonFinal.setText("aceptar");
+        botonFinal.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
+                botonFinalActionPerformed(evt);
             }
         });
-
-        labelResultado.setFont(new java.awt.Font("Liberation Sans", 0, 14)); // NOI18N
-        labelResultado.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        labelResultado.setText("NumOsos");
-        labelResultado.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
 
         javax.swing.GroupLayout dialogFinPartidaLayout = new javax.swing.GroupLayout(dialogFinPartida.getContentPane());
         dialogFinPartida.getContentPane().setLayout(dialogFinPartidaLayout);
         dialogFinPartidaLayout.setHorizontalGroup(
             dialogFinPartidaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, dialogFinPartidaLayout.createSequentialGroup()
-                .addContainerGap(96, Short.MAX_VALUE)
-                .addGroup(dialogFinPartidaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(labelResultado, javax.swing.GroupLayout.PREFERRED_SIZE, 101, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(labelFinPartida, javax.swing.GroupLayout.PREFERRED_SIZE, 101, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 101, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(69, 69, 69))
+            .addGroup(dialogFinPartidaLayout.createSequentialGroup()
+                .addContainerGap(80, Short.MAX_VALUE)
+                .addGroup(dialogFinPartidaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, dialogFinPartidaLayout.createSequentialGroup()
+                        .addComponent(labelResultados, javax.swing.GroupLayout.PREFERRED_SIZE, 143, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(77, 77, 77))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, dialogFinPartidaLayout.createSequentialGroup()
+                        .addComponent(labelFinPartida)
+                        .addGap(95, 95, 95))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, dialogFinPartidaLayout.createSequentialGroup()
+                        .addComponent(botonFinal)
+                        .addGap(107, 107, 107))))
         );
         dialogFinPartidaLayout.setVerticalGroup(
             dialogFinPartidaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(dialogFinPartidaLayout.createSequentialGroup()
-                .addGap(27, 27, 27)
-                .addComponent(labelFinPartida, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(22, 22, 22)
+                .addComponent(labelFinPartida)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(labelResultado, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(26, Short.MAX_VALUE))
+                .addComponent(labelResultados)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(botonFinal)
+                .addContainerGap(39, Short.MAX_VALUE))
         );
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -224,7 +232,7 @@ public class osoGameIndividualGUI extends javax.swing.JFrame implements ActionLi
             
             panelJuego.revalidate();
             
-            partidaOso.imprimeTablero();
+            partidaOso.imprimeEstadoPartida();
         }catch(NumberFormatException ex) {
             startButton.setEnabled(true);
         }
@@ -236,32 +244,35 @@ public class osoGameIndividualGUI extends javax.swing.JFrame implements ActionLi
             int y = botonOsoActual.getColumna();
             String letra = botonOsoActual.getText();
             
-            listaBotones.add(botonOsoActual);
             botonOsoActual.setLetra(letra);
+            listaBotonesJugada.add(botonOsoActual);
+            
             Jugada jugada = new Jugada(x, y, letra.charAt(0));
             partidaOso.realizaJugada(jugada);
-            pintaBotones(partidaOso.getCasillasJugada());
+            
+            pintaBotones(partidaOso.getTablero().getCasillasJugada());
+            partidaOso.getTablero().bloqueaJugada();
             panelJuego.revalidate();
-            partidaOso.vaciaLista();
             
             int numOsos = partidaOso.getNumOsos();
             fieldNumOsos.setText(String.valueOf(numOsos));
-            partidaOso.imprimeTablero();
+            partidaOso.imprimeEstadoPartida();
             botonOsoActual.setEnabled(false);
             botonOsoActual = null;
             
             if (partidaOso.finPartida()) {
+                partidaOso.imprimeEstadoPartida();
                 enviarButton.setEnabled(false);
-                labelResultado.setText("Total de OSOs conseguidos: "+ String.valueOf(partidaOso.getNumOsos()));
+                labelResultados.setText(labelResultados.getText() + partidaOso.getNumOsos());
                 dialogFinPartida.setVisible(true);
-                
             }
         }
     }//GEN-LAST:event_enviarButtonActionPerformed
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-            System.exit(0);
-    }//GEN-LAST:event_jButton1ActionPerformed
+    private void botonFinalActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonFinalActionPerformed
+        // TODO add your handling code here:
+        disposeJuego();
+    }//GEN-LAST:event_botonFinalActionPerformed
 
     public static void main(String args[]) {
         try {
@@ -273,23 +284,7 @@ public class osoGameIndividualGUI extends javax.swing.JFrame implements ActionLi
             new osoGameIndividualGUI().setVisible(true);
         });
     }
-
-    // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JDialog dialogFinPartida;
-    private javax.swing.JButton enviarButton;
-    private javax.swing.JTextField fieldColumnas;
-    private javax.swing.JTextField fieldFilas;
-    private javax.swing.JTextField fieldNumOsos;
-    private javax.swing.JButton jButton1;
-    private javax.swing.JLabel labelColumnas;
-    private javax.swing.JLabel labelFilas;
-    private javax.swing.JLabel labelFinPartida;
-    private javax.swing.JLabel labelOsos;
-    private javax.swing.JLabel labelResultado;
-    private javax.swing.JPanel panelJuego;
-    private javax.swing.JButton startButton;
-    // End of variables declaration//GEN-END:variables
-
+    
     @Override
     public void actionPerformed(ActionEvent ae) {
         ultimoBotonOso = botonOsoActual;
@@ -302,13 +297,36 @@ public class osoGameIndividualGUI extends javax.swing.JFrame implements ActionLi
             botonOsoActual.setText("S");
     }
 
-    private void pintaBotones(List<Casilla> casillasJugada) {
-        for (int i = 0; i< listaBotones.size(); i++) {
-            Casilla casilla = casillasJugada.get(i);
-            BotonOso boton = listaBotones.get(i);
-            if (casilla.getX() ==  boton.getFila() && casilla.getY() == boton.getColumna()) {
-                boton.setForeground(Color.blue);
+    private void pintaBotones(Set<Casilla> casillasJugada) {
+        for (int i= 0; i< listaBotonesJugada.size(); i++) {
+            BotonOso boton = listaBotonesJugada.get(i);
+            for (Casilla casilla: casillasJugada) {
+                if (casilla.getX() ==  boton.getFila() && casilla.getY() == boton.getColumna()) {
+                    boton.setForeground(Color.blue);
+                }
             }
         }
     }
+    
+    private void disposeJuego() {
+        dispose();
+        System.exit(0);
+    }
+
+    // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton botonFinal;
+    private javax.swing.JDialog dialogFinPartida;
+    private javax.swing.JButton enviarButton;
+    private javax.swing.JTextField fieldColumnas;
+    private javax.swing.JTextField fieldFilas;
+    private javax.swing.JTextField fieldNumOsos;
+    private javax.swing.JLabel labelColumnas;
+    private javax.swing.JLabel labelFilas;
+    private javax.swing.JLabel labelFinPartida;
+    private javax.swing.JLabel labelOsos;
+    private javax.swing.JLabel labelResultados;
+    private javax.swing.JPanel panelJuego;
+    private javax.swing.JButton startButton;
+    // End of variables declaration//GEN-END:variables
+
 }
