@@ -1,5 +1,5 @@
 # Juego del OSO por Jaider Felipe Santos Garzón
-## Netbeans jdk-17
+## Netbeans jdk-17 zulu
 ### Implementado en ordenador propio
 #### Instrucciones
 1. Ejecutar OsoGameConsole del paquete oso.game
