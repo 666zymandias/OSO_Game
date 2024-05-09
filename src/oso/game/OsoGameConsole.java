@@ -6,7 +6,7 @@ import java.util.Scanner;
 import oso.core.Jugada;
 import oso.core.Partida;
 
-public class osoGameConsole {
+public class OsoGameConsole {
     
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);

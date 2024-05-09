@@ -123,7 +123,6 @@ public class ClienteChatGUI extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void botonEnviarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonEnviarActionPerformed
-        // TODO add your handling code here:
         String texto = textoMensaje.getText();
         if (! texto.equals("")) {
             textoMensaje.setText("");
@@ -145,7 +144,7 @@ public class ClienteChatGUI extends javax.swing.JFrame {
                 socket = new Socket(hostAddr, port);
                 in = new DataInputStream(socket.getInputStream());
                 out = new DataOutputStream(socket.getOutputStream());
-                leeChat = new ClienteChatThread(in);
+                leeChat = new ClienteChatThread(in, areaChat);
                 leeChat.start();
                 textoUsuario.setFocusable(false);
             } catch (IOException ex) {
@@ -176,20 +175,4 @@ public class ClienteChatGUI extends javax.swing.JFrame {
     private javax.swing.JLabel userLabel;
     // End of variables declaration//GEN-END:variables
 
-    private class ClienteChatThread extends EscupeTextoThreadConsole {
-
-        public ClienteChatThread(DataInputStream in) {
-            super(in);
-        }
-
-        @Override
-        public void run() {
-            try {
-                for (String line; (line = in.readUTF()) != null;) {
-                    areaChat.append(line + "\n"); 
-                }
-            } catch (IOException ex) {
-            }
-        }
-    }
 }

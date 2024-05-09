@@ -59,7 +59,7 @@ public class ServidorChat extends Thread{
         @Override
         public void run() {
             try {
-                System.out.println("Conexion desde" + 
+                System.out.println("Conexion a chat desde" + 
                         socket.getInetAddress() + ": " + socket.getPort());
                 
                 DataInputStream in = new DataInputStream(socket.getInputStream());

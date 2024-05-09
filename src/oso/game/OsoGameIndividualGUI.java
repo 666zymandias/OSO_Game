@@ -21,13 +21,13 @@ import oso.core.Casilla;
 import oso.core.Jugada;
 import oso.core.Partida;
 
-public class osoGameIndividualGUI extends javax.swing.JFrame implements ActionListener {
+public class OsoGameIndividualGUI extends javax.swing.JFrame implements ActionListener {
 
     private BotonOso ultimoBotonOso, botonOsoActual;
     private Partida partidaOso;
     private final List<BotonOso> listaBotonesJugada = new ArrayList<>();
     
-    public osoGameIndividualGUI() {
+    public OsoGameIndividualGUI() {
         initComponents();
         
         this.setResizable(false);
@@ -60,7 +60,6 @@ public class osoGameIndividualGUI extends javax.swing.JFrame implements ActionLi
         enviarButton = new javax.swing.JButton();
 
         dialogFinPartida.setMinimumSize(new java.awt.Dimension(300, 150));
-        dialogFinPartida.setPreferredSize(new java.awt.Dimension(300, 150));
         dialogFinPartida.setResizable(false);
 
         labelFinPartida.setFont(new java.awt.Font("sansserif", 0, 16)); // NOI18N
@@ -282,10 +281,10 @@ public class osoGameIndividualGUI extends javax.swing.JFrame implements ActionLi
         try {
             UIManager.setLookAndFeel(new NimbusLookAndFeel());
         } catch (UnsupportedLookAndFeelException ex) {
-            Logger.getLogger(osoGameIndividualGUI.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(OsoGameIndividualGUI.class.getName()).log(Level.SEVERE, null, ex);
         }
         java.awt.EventQueue.invokeLater(() -> {
-            new osoGameIndividualGUI().setVisible(true);
+            new OsoGameIndividualGUI().setVisible(true);
         });
     }
     
