@@ -4,6 +4,11 @@
  */
 package oso.game;
 
+import java.awt.Font;
+import java.awt.GridBagLayout;
+import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -11,20 +16,29 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutput;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import oso.chat.ClienteChatGUI;
 import oso.chat.ClienteChatThread;
+import oso.core.BotonOso;
+import oso.core.Jugada;
+import oso.core.Partida;
 
 /**
  *
  * @author felipe
  */
-public class OsoGameMultijugadorGUI extends javax.swing.JFrame {
+public class OsoGameMultijugadorGUI extends javax.swing.JFrame implements ActionListener {
+    
+    private BotonOso ultimoBotonOso, botonOsoActual;
+    private Partida partidaOso;
+    private final List<BotonOso> listaBotonesJugada = new ArrayList<>();
 
     private final String hostAddr = "127.0.0.1";
-    private final int portJuego = 16000;
-    private final int portChat = 16001;
+    private final int portJuego = 15000;
+    private final int portChat = 16000;
     private String user;
     private Socket socketJuego;
     private Socket socketChat;
@@ -62,7 +76,7 @@ public class OsoGameMultijugadorGUI extends javax.swing.JFrame {
         jScrollPane1 = new javax.swing.JScrollPane();
         areaChat = new javax.swing.JTextArea();
         textoMensaje = new javax.swing.JTextField();
-        botonEnviar = new javax.swing.JButton();
+        botonEnviarMsg = new javax.swing.JButton();
         panelJuego = new javax.swing.JPanel();
         botonEnviarJugada = new javax.swing.JButton();
         textoOsosPropios = new javax.swing.JTextField();
@@ -87,13 +101,16 @@ public class OsoGameMultijugadorGUI extends javax.swing.JFrame {
         areaChat.setRows(5);
         jScrollPane1.setViewportView(areaChat);
 
-        botonEnviar.setFont(new java.awt.Font("Liberation Sans", 0, 15)); // NOI18N
-        botonEnviar.setText("enviar");
-        botonEnviar.addActionListener(new java.awt.event.ActionListener() {
+        botonEnviarMsg.setFont(new java.awt.Font("Liberation Sans", 0, 15)); // NOI18N
+        botonEnviarMsg.setText("enviar");
+        botonEnviarMsg.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                botonEnviarActionPerformed(evt);
+                botonEnviarMsgActionPerformed(evt);
             }
         });
+
+        panelJuego.setMinimumSize(new java.awt.Dimension(390, 390));
+        panelJuego.setPreferredSize(new java.awt.Dimension(390, 390));
 
         javax.swing.GroupLayout panelJuegoLayout = new javax.swing.GroupLayout(panelJuego);
         panelJuego.setLayout(panelJuegoLayout);
@@ -108,10 +125,17 @@ public class OsoGameMultijugadorGUI extends javax.swing.JFrame {
 
         botonEnviarJugada.setFont(new java.awt.Font("Liberation Sans", 0, 15)); // NOI18N
         botonEnviarJugada.setText("enviar");
+        botonEnviarJugada.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                botonEnviarJugadaActionPerformed(evt);
+            }
+        });
 
+        textoOsosPropios.setFont(new java.awt.Font("Liberation Sans", 0, 15)); // NOI18N
         textoOsosPropios.setHorizontalAlignment(javax.swing.JTextField.CENTER);
         textoOsosPropios.setText("0");
 
+        textoOsosRivales.setFont(new java.awt.Font("Liberation Sans", 0, 15)); // NOI18N
         textoOsosRivales.setHorizontalAlignment(javax.swing.JTextField.CENTER);
         textoOsosRivales.setText("0");
 
@@ -154,7 +178,7 @@ public class OsoGameMultijugadorGUI extends javax.swing.JFrame {
                             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                                 .addComponent(textoMensaje)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(botonEnviar, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addComponent(botonEnviarMsg, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 321, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGap(0, 0, Short.MAX_VALUE)))
                 .addGap(11, 11, 11))
@@ -170,13 +194,13 @@ public class OsoGameMultijugadorGUI extends javax.swing.JFrame {
                 .addGap(15, 15, 15)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 431, Short.MAX_VALUE)
-                    .addComponent(panelJuego, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(panelJuego, javax.swing.GroupLayout.DEFAULT_SIZE, 431, Short.MAX_VALUE))
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(textoMensaje, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(botonEnviar)
+                            .addComponent(botonEnviarMsg)
                             .addComponent(botonEnviarJugada))
                         .addGap(21, 21, 21))
                     .addGroup(layout.createSequentialGroup()
@@ -188,7 +212,7 @@ public class OsoGameMultijugadorGUI extends javax.swing.JFrame {
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(textoOsosRivales, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(labelOsosRivales))
-                        .addContainerGap(14, Short.MAX_VALUE))))
+                        .addContainerGap(12, Short.MAX_VALUE))))
         );
 
         pack();
@@ -205,8 +229,10 @@ public class OsoGameMultijugadorGUI extends javax.swing.JFrame {
                 inChat = new DataInputStream(socketChat.getInputStream());
                 outChat = new DataOutputStream(socketChat.getOutputStream());
                 
+                /*
                 inJuego = new ObjectInputStream(socketJuego.getInputStream());
                 outJuego = new ObjectOutputStream(socketJuego.getOutputStream());
+                */
                 
                 leeDimensionesJuego();
                 
@@ -224,7 +250,7 @@ public class OsoGameMultijugadorGUI extends javax.swing.JFrame {
        
     }//GEN-LAST:event_botonConectarActionPerformed
 
-    private void botonEnviarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonEnviarActionPerformed
+    private void botonEnviarMsgActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonEnviarMsgActionPerformed
         String texto = textoMensaje.getText();
         if (! texto.equals("")) {
             textoMensaje.setText("");
@@ -236,7 +262,26 @@ public class OsoGameMultijugadorGUI extends javax.swing.JFrame {
                 Logger.getLogger(ClienteChatGUI.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
-    }//GEN-LAST:event_botonEnviarActionPerformed
+    }//GEN-LAST:event_botonEnviarMsgActionPerformed
+
+    private void botonEnviarJugadaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonEnviarJugadaActionPerformed
+        // TODO add your handling code here:
+        if (botonOsoActual != null) {
+            int x = botonOsoActual.getFila();
+            int y = botonOsoActual.getColumna();
+            String letra = botonOsoActual.getText();
+            
+            botonOsoActual.setLetra(letra);
+            listaBotonesJugada.add(botonOsoActual);
+            
+            Jugada jugada = new Jugada(x, y, letra.charAt(0));
+            try {
+                outJuego.writeObject(jugada);
+            } catch (IOException ex) {
+                Logger.getLogger(OsoGameMultijugadorGUI.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    }//GEN-LAST:event_botonEnviarJugadaActionPerformed
 
     /**
      * @param args the command line arguments
@@ -276,8 +321,8 @@ public class OsoGameMultijugadorGUI extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTextArea areaChat;
     private javax.swing.JButton botonConectar;
-    private javax.swing.JButton botonEnviar;
     private javax.swing.JButton botonEnviarJugada;
+    private javax.swing.JButton botonEnviarMsg;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JLabel labelOsosPropios;
     private javax.swing.JLabel labelOsosRivales;
@@ -292,14 +337,51 @@ public class OsoGameMultijugadorGUI extends javax.swing.JFrame {
     private void leeDimensionesJuego() {
         DataInputStream din;
         try {
+            
             din = new DataInputStream(socketJuego.getInputStream());
             String linea  = din.readUTF();
-            filas = linea.charAt(0);
-            columnas = linea.charAt(2);
+            filas = linea.charAt(0) - '0';
+            columnas = linea.charAt(3) - '0';
+            System.out.println(filas + ", "+columnas);
+            
+            panelJuego.setLayout(new GridLayout(filas, columnas));
+           
+            
+            int sizeLetra = 0;
+            if (filas * columnas < 81) {
+                sizeLetra = 30;
+            } else {
+                sizeLetra = 15;
+            }
+            for (int i = 0; i < filas; i++) {
+                for (int j = 0; j < columnas; j++) {
+                    BotonOso botonOso = new BotonOso(i, j);
+                    botonOso.setFont(new Font("Arial", Font.PLAIN, sizeLetra));
+                    botonOso.addActionListener(this);
+                    panelJuego.add(botonOso);
+                }
+            }
+
+            panelJuego.revalidate();
+            
         } catch (IOException ex) {
             Logger.getLogger(OsoGameMultijugadorGUI.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
-        
     }
+        
+    @Override
+    public void actionPerformed(ActionEvent ae) {
+
+        ultimoBotonOso = botonOsoActual;
+        botonOsoActual = (BotonOso) ae.getSource();
+        if (ultimoBotonOso != null && ultimoBotonOso != botonOsoActual) {
+            ultimoBotonOso.setText("");
+        }
+        if (botonOsoActual.getText().equals("") || botonOsoActual.getText().equals("S")) {
+            botonOsoActual.setText("O");
+        } else if (botonOsoActual.getText().equals("O")) {
+            botonOsoActual.setText("S");
+        }
+    }
+    
 }

@@ -28,7 +28,7 @@ public class ServidorChat extends Thread{
     @Override
     public void run(){
         try( ServerSocket serverSocket = new ServerSocket(port); ){
-        System.out.println("Started server on port " + port);
+        System.out.println("Servidor de chat iniciado en puerto: " + port);
             // repeatedly wait for connections
             while(! interrupted() ){
                 Socket clientSocket = serverSocket.accept();
@@ -59,7 +59,7 @@ public class ServidorChat extends Thread{
         @Override
         public void run() {
             try {
-                System.out.println("Conexion a chat desde" + 
+                System.out.println("Conexion a chat desde " + 
                         socket.getInetAddress() + ": " + socket.getPort());
                 
                 DataInputStream in = new DataInputStream(socket.getInputStream());

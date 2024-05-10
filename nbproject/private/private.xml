@@ -3,10 +3,13 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/home/felipe/NetBeansProjects/Santos_Garzon_Felipe_OSO/src/oso/game/osoGameIndividualGUI.java</file>
-            <file>file:/home/felipe/NetBeansProjects/Santos_Garzon_Felipe_OSO/src/oso/game/osoGameConsole.java</file>
-            <file>file:/home/felipe/NetBeansProjects/Santos_Garzon_Felipe_OSO/src/oso/core/Tablero.java</file>
-            <file>file:/home/felipe/NetBeansProjects/Santos_Garzon_Felipe_OSO/src/oso/core/Partida.java</file>
+            <file>file:/home/felipe/Escritorio/proyectos-con-git/Santos_Garzon_Felipe_OSO/src/oso/chat/ClienteChatGUI.java</file>
+            <file>file:/home/felipe/Escritorio/proyectos-con-git/Santos_Garzon_Felipe_OSO/src/oso/game/ServidorJuegoMultijugador.java</file>
+            <file>file:/home/felipe/Escritorio/proyectos-con-git/Santos_Garzon_Felipe_OSO/src/oso/chat/ServidorChat.java</file>
+            <file>file:/home/felipe/Escritorio/proyectos-con-git/Santos_Garzon_Felipe_OSO/src/oso/game/OsoGameIndividualGUI.java</file>
+            <file>file:/home/felipe/Escritorio/proyectos-con-git/Santos_Garzon_Felipe_OSO/src/oso/game/OsoGameMultijugadorGUI.java</file>
+            <file>file:/home/felipe/Escritorio/proyectos-con-git/Santos_Garzon_Felipe_OSO/src/oso/chat/ClienteChatThread.java</file>
+            <file>file:/home/felipe/Escritorio/proyectos-con-git/Santos_Garzon_Felipe_OSO/src/oso/game/OsoGameThread.java</file>
         </group>
     </open-files>
 </project-private>

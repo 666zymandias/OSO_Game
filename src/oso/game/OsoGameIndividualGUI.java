@@ -230,10 +230,11 @@ public class OsoGameIndividualGUI extends javax.swing.JFrame implements ActionLi
                     panelJuego.add(botonOso);
                 }
             }
-            fieldFilas.setEnabled(false);
-            fieldColumnas.setEnabled(false);
             
             panelJuego.revalidate();
+                       
+            fieldFilas.setEnabled(false);
+            fieldColumnas.setEnabled(false);
             
             partidaOso.imprimeEstadoPartida();
         }catch(NumberFormatException ex) {

@@ -16,7 +16,9 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import oso.chat.ServidorChat;
+import oso.core.EstadoJuego;
 import oso.core.Jugada;
+import oso.core.Partida;
 
 /**
  *
@@ -25,14 +27,16 @@ import oso.core.Jugada;
 public class ServidorJuegoMultijugador extends Thread{
 
     private final int portJuego = 15000;
-    private int filas;
-    private int columnas;
+    private final int filas;
+    private final int columnas;
     private int numConexiones = 0;
     final List<ClientThreadJuego> clients = new LinkedList<>();
+    private EstadoJuego estadoJuego;
     
     public static void main(String[] args) {
+        final int portChat = 16000;
         ServidorJuegoMultijugador server = new ServidorJuegoMultijugador(3, 3);
-        ServidorChat serverChat = new ServidorChat(16000);
+        ServidorChat serverChat = new ServidorChat(portChat);
         serverChat.start();
         server.start();
     }
@@ -45,12 +49,16 @@ public class ServidorJuegoMultijugador extends Thread{
     
     @Override
     public void run() {
+        
+        estadoJuego = new EstadoJuego(filas, columnas, 0, 0, 0);
+        
         try (ServerSocket serverSocket = new ServerSocket(portJuego);) {
             
-            System.out.println("Started server on port " + portJuego);
+            System.out.println("Servidor de juego iniciado en puerto: " + portJuego);
             // repeatedly wait for connections
             while (numConexiones < 2) {
                 Socket clientSocket = serverSocket.accept();
+                
                 ClientThreadJuego clientThread = new ClientThreadJuego(clientSocket);
                 clientThread.start();
                 numConexiones += 1;
@@ -74,9 +82,11 @@ public class ServidorJuegoMultijugador extends Thread{
             this.socket = socket;
         }
         
-        synchronized public void sendDimensionesTablero(int filas, int columnas) throws IOException {
+        synchronized public void sendInformacionInicial() throws IOException {
             DataOutputStream outaux = new DataOutputStream(socket.getOutputStream());
-            outaux.writeUTF(filas +" "+ columnas);
+            String mensaje = filas + ", " + columnas, "";
+            outaux.writeUTF(mensaje);
+            outaux.flush();
         }
                 
         synchronized public void sendJugada(Jugada jugada){
@@ -92,12 +102,12 @@ public class ServidorJuegoMultijugador extends Thread{
             try {
                 System.out.println("Conexion a juego desde " + 
                         socket.getInetAddress() + ": " + socket.getPort());
+                sendInformacionInicial(filas, columnas);
                 
                 in = new ObjectInputStream(socket.getInputStream());
                 out = new ObjectOutputStream(socket.getOutputStream());
 
                 synchronized (clients) { 
-                    sendDimensionesTablero(filas, columnas);
                     clients.add(this);
                 }
 

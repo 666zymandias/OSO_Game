@@ -9,6 +9,12 @@ public class Jugada {
     private int columna;
     private char letra;
 
+    /**
+     *
+     * @param fila
+     * @param columna
+     * @param letra
+     */
     public Jugada(int fila, int columna, char letra) {
         this.fila = fila;
         this.columna = columna;
