@@ -4,7 +4,7 @@
  */
 package oso.chat;
 
-import oso.utils.ClienteChatThread;
+import oso.utils.ClienteChatHilo;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -27,7 +27,7 @@ public class ClienteChatGUI extends javax.swing.JFrame {
     private Socket socket;
     private DataInputStream in;
     private DataOutputStream out;
-    private ClienteChatThread leeChat;
+    private ClienteChatHilo leeChat;
     
     public ClienteChatGUI() {
         initComponents();
@@ -145,7 +145,7 @@ public class ClienteChatGUI extends javax.swing.JFrame {
                 socket = new Socket(hostAddr, port);
                 in = new DataInputStream(socket.getInputStream());
                 out = new DataOutputStream(socket.getOutputStream());
-                leeChat = new ClienteChatThread(in, areaChat);
+                leeChat = new ClienteChatHilo(in, areaChat);
                 leeChat.start();
                 textoUsuario.setFocusable(false);
                 out.writeUTF("Usuario "+ user+ " conectado");

@@ -1,6 +1,6 @@
 package oso.chat;
 
-import oso.utils.EscupeTextoThreadConsole;
+import oso.utils.EscupeTextoHilo;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -23,7 +23,7 @@ public class ClienteChatConsole {
         final DataInputStream in = new DataInputStream(socket.getInputStream());
         final DataOutputStream out = new DataOutputStream(socket.getOutputStream());
         
-        EscupeTextoThreadConsole lectorChat = new EscupeTextoThreadConsole(in);
+        EscupeTextoHilo lectorChat = new EscupeTextoHilo(in);
         lectorChat.start();
         out.writeUTF("+ Usuario "+ user + " conectado");
         for(;;){

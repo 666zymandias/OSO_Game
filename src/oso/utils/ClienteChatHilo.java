@@ -4,7 +4,6 @@
  */
 package oso.utils;
 
-import oso.utils.EscupeTextoThreadConsole;
 import java.io.DataInputStream;
 import java.io.IOException;
 import javax.swing.JTextArea;
@@ -13,11 +12,11 @@ import javax.swing.JTextArea;
  *
  * @author felipe
  */
-public class ClienteChatThread extends EscupeTextoThreadConsole {
+public class ClienteChatHilo extends EscupeTextoHilo {
     
     private final JTextArea areaChat;
     
-    public ClienteChatThread(DataInputStream in, JTextArea areaChat) {
+    public ClienteChatHilo(DataInputStream in, JTextArea areaChat) {
             super(in);
             this.areaChat = areaChat;
         }

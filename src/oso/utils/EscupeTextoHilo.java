@@ -4,11 +4,11 @@ package oso.utils;
 import java.io.DataInputStream;
 import java.io.IOException;
 
-public class EscupeTextoThreadConsole extends Thread{
+public class EscupeTextoHilo extends Thread{
 
     protected final DataInputStream in;
 
-    public EscupeTextoThreadConsole(DataInputStream in) {
+    public EscupeTextoHilo(DataInputStream in) {
         this.in = in;
     }
     

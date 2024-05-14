@@ -21,12 +21,11 @@ import java.util.List;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import oso.utils.ClienteChatThread;
+import oso.utils.ClienteChatHilo;
 import oso.core.BotonOso;
 import oso.core.Casilla;
 import oso.core.EstadoJuego;
 import oso.core.Jugada;
-import oso.core.Partida;
 import oso.core.PartidaMultijugador;
 import oso.utils.CustomExceptionHandler;
 
@@ -51,7 +50,7 @@ public class OsoGameMultijugadorGUI extends javax.swing.JFrame implements Action
     private ObjectInputStream inJuego;
     private ObjectOutputStream outJuego;
     
-    private ClienteChatThread leeChat;
+    private ClienteChatHilo leeChat;
     OsoGameThread hiloJuego;
             
     private int filas;
@@ -69,8 +68,8 @@ public class OsoGameMultijugadorGUI extends javax.swing.JFrame implements Action
         setLocationRelativeTo(null);
         areaChat.setFocusable(false);
         textoMensaje.setFocusable(false);
-        textoOsosPropios.setEnabled(false);
-        textoOsosRivales.setEnabled(false);
+        textoOsosPropios.setFocusable(false);
+        textoOsosRivales.setFocusable(false);
         botonEnviarJugada.setEnabled(false);
     }
 
@@ -124,7 +123,7 @@ public class OsoGameMultijugadorGUI extends javax.swing.JFrame implements Action
         panelJuego.setLayout(panelJuegoLayout);
         panelJuegoLayout.setHorizontalGroup(
             panelJuegoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 390, Short.MAX_VALUE)
+            .addGap(0, 396, Short.MAX_VALUE)
         );
         panelJuegoLayout.setVerticalGroup(
             panelJuegoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -142,6 +141,11 @@ public class OsoGameMultijugadorGUI extends javax.swing.JFrame implements Action
         textoOsosPropios.setFont(new java.awt.Font("Liberation Sans", 0, 15)); // NOI18N
         textoOsosPropios.setHorizontalAlignment(javax.swing.JTextField.CENTER);
         textoOsosPropios.setText("0");
+        textoOsosPropios.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                textoOsosPropiosActionPerformed(evt);
+            }
+        });
 
         textoOsosRivales.setFont(new java.awt.Font("Liberation Sans", 0, 15)); // NOI18N
         textoOsosRivales.setHorizontalAlignment(javax.swing.JTextField.CENTER);
@@ -161,7 +165,6 @@ public class OsoGameMultijugadorGUI extends javax.swing.JFrame implements Action
                 .addGap(15, 15, 15)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(26, 26, 26)
                         .addComponent(labelUsuario)
                         .addGap(18, 18, 18)
                         .addComponent(textoUsuario, javax.swing.GroupLayout.PREFERRED_SIZE, 198, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -180,7 +183,7 @@ public class OsoGameMultijugadorGUI extends javax.swing.JFrame implements Action
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addComponent(textoOsosPropios, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                     .addComponent(textoOsosRivales, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                            .addComponent(panelJuego, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(panelJuego, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 396, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 27, Short.MAX_VALUE)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
@@ -255,7 +258,7 @@ public class OsoGameMultijugadorGUI extends javax.swing.JFrame implements Action
             hiloJuego.start();
                 
             //hilo de chat
-            leeChat = new ClienteChatThread(inChat, areaChat);
+            leeChat = new ClienteChatHilo(inChat, areaChat);
             leeChat.start();
             
             try {
@@ -309,6 +312,10 @@ public class OsoGameMultijugadorGUI extends javax.swing.JFrame implements Action
             desbloqueaTablero(false);
         }
     }//GEN-LAST:event_botonEnviarJugadaActionPerformed
+
+    private void textoOsosPropiosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_textoOsosPropiosActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_textoOsosPropiosActionPerformed
 
     /**
      * @param args the command line arguments
@@ -424,7 +431,7 @@ public class OsoGameMultijugadorGUI extends javax.swing.JFrame implements Action
     
     public void manejaExcepcion(Exception ex) {
         CustomExceptionHandler handler = new CustomExceptionHandler();
-        Logger.getLogger(ServidorJuegoMultijugador.class.getName()).log(Level.SEVERE, null, ex);
+        Logger.getLogger(ServerGameMultijugador.class.getName()).log(Level.SEVERE, null, ex);
         handler.uncaughtException(Thread.currentThread(), ex);
         disposeJuego();
     }
