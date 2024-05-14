@@ -2,8 +2,9 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package oso.chat;
+package oso.utils;
 
+import oso.utils.EscupeTextoThreadConsole;
 import java.io.DataInputStream;
 import java.io.IOException;
 import javax.swing.JTextArea;

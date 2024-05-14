@@ -1,12 +1,12 @@
 
-package oso.chat;
+package oso.utils;
 
 import java.io.DataInputStream;
 import java.io.IOException;
 
 public class EscupeTextoThreadConsole extends Thread{
 
-    final DataInputStream in;
+    protected final DataInputStream in;
 
     public EscupeTextoThreadConsole(DataInputStream in) {
         this.in = in;

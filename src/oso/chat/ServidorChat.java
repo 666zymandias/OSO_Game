@@ -12,14 +12,13 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class ServidorChat extends Thread{
+    private final int port;
+    private final List<ClientThread> clients = new LinkedList<>();
+    
     public static void main(String[] args) {
         ServidorChat server = new ServidorChat(16000);
         server.start();
-    }
-    
-    final int port;
-    final List<ClientThread> clients = new LinkedList<>();
-    
+    }   
     
     public ServidorChat(int port) {
         this.port = port;
@@ -32,7 +31,7 @@ public class ServidorChat extends Thread{
             // repeatedly wait for connections
             while(! interrupted() ){
                 Socket clientSocket = serverSocket.accept();
-                ClientThread clientThread = new ClientThread(clientSocket);
+                ClientThread clientThread = new ClientThread(clientSocket, clients);
                 clientThread.start();
             }
         }catch(Exception ex){
@@ -40,11 +39,13 @@ public class ServidorChat extends Thread{
     }
     
     public class ClientThread extends Thread{
-        final Socket socket;
-        DataOutputStream out;
+        private final Socket socket;
+        private DataOutputStream out;
+        private final List<ClientThread> clients;
 
-        public ClientThread(Socket socket) {
+        public ClientThread(Socket socket, List<ClientThread> clients) {
             this.socket = socket;
+            this.clients = clients;
         }
         
         //only one thread at the time can send messages through the socket
@@ -65,14 +66,14 @@ public class ServidorChat extends Thread{
                 DataInputStream in = new DataInputStream(socket.getInputStream());
                 out = new DataOutputStream(socket.getOutputStream());
 
-                synchronized (clients) { //we must sync because other clients may be iterating over it
+                synchronized (clients) {
                     clients.add(this);
                 }
 
                 for (String line; (line = in.readUTF()) != null;) {
                     try {
                         String msg = line;
-                        synchronized (clients) { //other clients may be trying to add to the list
+                        synchronized (clients) {
                             clients.forEach(c -> c.sendMsg(msg));
                         }
                     }catch (Exception ex) {
@@ -80,7 +81,7 @@ public class ServidorChat extends Thread{
                 }
 
             } catch (IOException ex) {
-            } finally { //we have finished or failed so let's close the socket and remove ourselves from the list
+            } finally { 
                 try{ 
                     socket.close(); 
                 } catch(IOException ex){

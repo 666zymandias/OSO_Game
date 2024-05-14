@@ -7,8 +7,6 @@ package oso.game;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.io.DataOutputStream;
-import static java.lang.Thread.interrupted;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.LinkedList;
@@ -18,7 +16,6 @@ import java.util.logging.Logger;
 import oso.chat.ServidorChat;
 import oso.core.EstadoJuego;
 import oso.core.Jugada;
-import oso.core.Partida;
 
 /**
  *
@@ -26,15 +23,14 @@ import oso.core.Partida;
  */
 public class ServidorJuegoMultijugador extends Thread{
 
-    private final int portJuego = 15000;
+    private final int portJuego = 12000;
     private final int filas;
     private final int columnas;
-    private int numConexiones = 0;
-    final List<ClientThreadJuego> clients = new LinkedList<>();
+    final List<ClientThreadJuego> clientes = new LinkedList<>();
     private EstadoJuego estadoJuego;
     
     public static void main(String[] args) {
-        final int portChat = 16000;
+        final int portChat = 13000;
         ServidorJuegoMultijugador server = new ServidorJuegoMultijugador(3, 3);
         ServidorChat serverChat = new ServidorChat(portChat);
         serverChat.start();
@@ -46,95 +42,115 @@ public class ServidorJuegoMultijugador extends Thread{
         this.columnas = columnas;
     }
     
-    
     @Override
     public void run() {
+        int jugador = 0;
         
-        estadoJuego = new EstadoJuego(filas, columnas, 0, 0, 0);
+        estadoJuego = new EstadoJuego(filas, columnas, 0, 0);
         
-        try (ServerSocket serverSocket = new ServerSocket(portJuego);) {
+        try {
+            ServerSocket serverSocket = new ServerSocket(portJuego);
             
-            System.out.println("Servidor de juego iniciado en puerto: " + portJuego);
-            // repeatedly wait for connections
-            while (numConexiones < 2) {
-                Socket clientSocket = serverSocket.accept();
+            System.out.println("Servidor juego del OSO iniciado en puerto: " + portJuego);
+            
+            while (! estadoJuego.getPartidaOso().finPartida()) {
                 
-                ClientThreadJuego clientThread = new ClientThreadJuego(clientSocket);
-                clientThread.start();
-                numConexiones += 1;
+                if (estadoJuego.getTotalJugadores() < 2) {
+                    Socket clientSocket = serverSocket.accept();
+                    
+                    ClientThreadJuego clientThread = new ClientThreadJuego(clientes, clientSocket, jugador, estadoJuego);
+                    clientThread.start();
+                    
+                    jugador ++;
+                    estadoJuego.aumentaJugadoresEn1();
+                }
             }
-        } catch (Exception ex) {
+        } catch (IOException | SecurityException | IllegalArgumentException | NullPointerException ex) {
+            Logger.getLogger(ServidorJuegoMultijugador.class.getName()).log(Level.SEVERE, null, ex);
         }
-         
-        while (! interrupted()) {
-            
         
-        }
-    
     }
     
     public class ClientThreadJuego extends Thread{
+        final List<ClientThreadJuego> clientes;
         final Socket socket;
         ObjectInputStream in;
         ObjectOutputStream out;
+        int jugador;
+        EstadoJuego estadoJuego;
 
-        public ClientThreadJuego(Socket socket) {
+        public ClientThreadJuego(List<ClientThreadJuego> clientes, Socket socket, int jugador, EstadoJuego estadoJuego) {
+            this.clientes = clientes;
             this.socket = socket;
+            this.jugador = jugador;
+            this.estadoJuego = estadoJuego;
         }
         
-        synchronized public void sendInformacionInicial() throws IOException {
-            DataOutputStream outaux = new DataOutputStream(socket.getOutputStream());
-            String mensaje = filas + ", " + columnas, "";
-            outaux.writeUTF(mensaje);
-            outaux.flush();
-        }
-                
-        synchronized public void sendJugada(Jugada jugada){
+        synchronized public void sendEstadoActual(EstadoJuego estado) {
             try {
-                out.writeObject(jugada);
-            } catch (IOException ex) {
-                Logger.getLogger(ServidorChat.class.getName()).log(Level.SEVERE, null, ex);
+                out.writeObject(estado);
+                out.flush();
+            } catch (IOException ex ) {
+                Logger.getLogger(ServidorJuegoMultijugador.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
         
         @Override
         public void run() {
             try {
-                System.out.println("Conexion a juego desde " + 
-                        socket.getInetAddress() + ": " + socket.getPort());
-                sendInformacionInicial(filas, columnas);
-                
                 in = new ObjectInputStream(socket.getInputStream());
                 out = new ObjectOutputStream(socket.getOutputStream());
-
-                synchronized (clients) { 
-                    clients.add(this);
+                
+                System.out.println("Conexion con cliente (" +jugador+ ") a juego desde " + 
+                        socket.getInetAddress() + ": " + socket.getPort());
+                
+                sendInformacionInicial();
+                
+                synchronized (clientes) { 
+                    clientes.add(this);
                 }
 
-                for (Object object; (object = in.readObject()) != null;) {
+                for (Object inputJugada; (inputJugada = in.readObject()) != null;) {
+                    
                     try {
-                        Jugada jugada = (Jugada) object;
-                        synchronized (clients) { //other clients may be trying to add to the list
-                            clients.forEach(c -> {
-                                c.sendJugada(jugada);
+                        Jugada jugada = (Jugada) inputJugada;
+                        estadoJuego.getPartidaOso().realizaJugada(jugada);
+                        estadoJuego.siguienteTurno();
+                        
+                        synchronized (clientes) {
+                            clientes.forEach(c -> {
+                                c.sendEstadoActual(estadoJuego);
                             });
                         }
+                        
                     }catch (Exception ex) {
+                    
                     }
                 }
 
-            } catch (IOException ex) {
-            } catch (ClassNotFoundException ex) {
+            } catch (IOException | SecurityException | IllegalArgumentException | NullPointerException | ClassNotFoundException ex) {
                 Logger.getLogger(ServidorJuegoMultijugador.class.getName()).log(Level.SEVERE, null, ex);
-            } finally { //we have finished or failed so let's close the socket and remove ourselves from the list
+            } finally {
                 try{ 
                     socket.close(); 
                 } catch(IOException ex){
                 }
-                synchronized (clients) {
-                    clients.remove(this);
+                synchronized (clientes) {
+                    clientes.remove(this);
                 }
             }
+        }
+
+        private void sendInformacionInicial() {
+            try {
+                out.writeInt(jugador);
+                out.flush();
+            } catch (IOException ex) {
+                Logger.getLogger(ServidorJuegoMultijugador.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            
+            sendEstadoActual(estadoJuego);
+            
         }
     }
 

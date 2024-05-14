@@ -4,6 +4,7 @@
  */
 package oso.chat;
 
+import oso.utils.ClienteChatThread;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -147,6 +148,7 @@ public class ClienteChatGUI extends javax.swing.JFrame {
                 leeChat = new ClienteChatThread(in, areaChat);
                 leeChat.start();
                 textoUsuario.setFocusable(false);
+                out.writeUTF("Usuario "+ user+ " conectado");
             } catch (IOException ex) {
                 botonConectar.setEnabled(true);
                 Logger.getLogger(ClienteChatGUI.class.getName()).log(Level.SEVERE, null, ex);

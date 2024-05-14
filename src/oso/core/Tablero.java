@@ -4,10 +4,11 @@
  */
 package oso.core;
 
+import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
-public class Tablero {
+public class Tablero implements Serializable{
     private final Casilla[][] matrizOsos;
     private final Set<Casilla> casillasJugada = new HashSet<>();
 
@@ -21,6 +22,14 @@ public class Tablero {
                 matrizOsos[i][j] = new Casilla(' ', i, j);
             }
         }
+    }
+    
+    public int getFilas() {
+        return matrizOsos.length;
+    }
+    
+    public int getColumnas() {
+        return matrizOsos[0].length;
     }
 
     public Casilla[][] getMatrizOsos() {

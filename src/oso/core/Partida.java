@@ -1,17 +1,19 @@
 
 package oso.core;
 
+import java.io.Serializable;
+
+
 /**
  *
  * @author hydfe
  */
-public class Partida {
-    private int numOsos;
-    private final Tablero tableroOso;
+public class Partida implements Serializable {
+    protected int totalOsos = 0;
+    protected final Tablero tableroOso;
 
     public Partida(int filas, int columnas) {
         this.tableroOso = new Tablero(filas, columnas);
-        this.numOsos = 0;
         tableroOso.init();
     }
 
@@ -20,12 +22,12 @@ public class Partida {
     }
 
     public int getNumOsos() {
-        return numOsos;
+        return totalOsos;
     }
     
     public void imprimeEstadoPartida() {
         tableroOso.imprimeTablero();
-        System.out.println("Numero de OSOs: "+ numOsos);
+        System.out.println("Numero de OSOs: "+ totalOsos);
     }
         
     public boolean finPartida() {
@@ -45,11 +47,12 @@ public class Partida {
     
     public void realizaJugada(Jugada jugada) {
         if (esValida(jugada)) {
+            System.out.println(jugada);
             int x = jugada.getFila();
             int y = jugada.getColumna();
             char letra =  jugada.getLetra();
             tableroOso.ponPieza(jugada.getFila(), jugada.getColumna(), letra);
-            numOsos += tableroOso.contarOsosDesdeCasilla(x, y, letra);
+            totalOsos += tableroOso.contarOsosDesdeCasilla(x, y, letra);
             imprimeEstadoPartida();
         }
         else

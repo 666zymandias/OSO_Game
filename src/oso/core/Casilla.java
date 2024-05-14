@@ -4,11 +4,13 @@
  */
 package oso.core;
 
+import java.io.Serializable;
+
 /**
  *
  * @author felipe
  */
-public class Casilla {
+public class Casilla implements Serializable {
     private char valor;
     private boolean Valida;
     private int x;

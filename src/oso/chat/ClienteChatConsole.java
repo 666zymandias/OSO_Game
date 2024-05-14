@@ -1,5 +1,6 @@
 package oso.chat;
 
+import oso.utils.EscupeTextoThreadConsole;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -24,6 +25,7 @@ public class ClienteChatConsole {
         
         EscupeTextoThreadConsole lectorChat = new EscupeTextoThreadConsole(in);
         lectorChat.start();
+        out.writeUTF("+ Usuario "+ user + " conectado");
         for(;;){
             String msg = scanner.nextLine();
             if(msg.equalsIgnoreCase("exit"))

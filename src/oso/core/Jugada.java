@@ -4,21 +4,26 @@
  */
 package oso.core;
 
-public class Jugada {
+import java.io.Serializable;
+
+public class Jugada implements Serializable{
     private int fila;
     private int columna;
     private char letra;
+    private int jugador = -1;
 
-    /**
-     *
-     * @param fila
-     * @param columna
-     * @param letra
-     */
+    
     public Jugada(int fila, int columna, char letra) {
         this.fila = fila;
         this.columna = columna;
         this.letra = letra;
+    }
+    
+    public Jugada(int fila, int columna, char letra, int jugador) {
+        this.fila = fila;
+        this.columna = columna;
+        this.letra = letra;
+        this.jugador = jugador;
     }
 
     public int getFila() {
@@ -43,6 +48,15 @@ public class Jugada {
 
     public void setLetra(char letra) {
         this.letra = letra;
+    }
+
+    public int getJugador() {
+        return jugador;
+    }
+    
+    @Override
+    public String toString() {
+        return "Jugador: "+ jugador + ", fila: " +fila+ ", columna: "+ columna + ", letra: "+ letra;
     }
     
 }

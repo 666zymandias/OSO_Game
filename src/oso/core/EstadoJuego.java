@@ -4,39 +4,44 @@
  */
 package oso.core;
 
+import java.io.Serializable;
+
 /**
  *
  * @author felipe
  */
-public class EstadoJuego {
+public class EstadoJuego implements Serializable{
     
-    private final Partida partidaOso;
-    private final int ososJ1;
-    private final int ososJ2;
-    private final int TurnoActual;
+    private final PartidaMultijugador partida;
+    private int turnoActual;
+    private int totalJugadores;
 
-    public EstadoJuego(int filas, int columnas, int ososJ1, int ososJ2, int TurnoActual) {
-        this.partidaOso = new Partida(filas, columnas);
-        this.ososJ1 = ososJ1;
-        this.ososJ2 = ososJ2;
-        this.TurnoActual = TurnoActual;
+    public EstadoJuego(int filas, int columnas, int turnoActual, int totalJugadores) {
+        this.partida = new PartidaMultijugador(filas, columnas);
+        this.turnoActual = turnoActual;
+        this.totalJugadores = totalJugadores;
     }
 
-    public Partida getPartidaOso() {
-        return partidaOso;
-    }
-
-    public int getOsosJ1() {
-        return ososJ1;
-    }
-
-    public int getOsosJ2() {
-        return ososJ2;
+    public PartidaMultijugador getPartidaOso() {
+        return partida;
     }
 
     public int getTurnoActual() {
-        return TurnoActual;
+        return turnoActual;
+    }
+
+    public int getTotalJugadores() {
+        return totalJugadores;
     }
     
+    public void aumentaJugadoresEn1() {
+        this.totalJugadores ++;
+    }
     
+    public void siguienteTurno() {
+        if (turnoActual == 0)
+            turnoActual = 1; 
+        else
+            turnoActual = 0;
+    }
 }
