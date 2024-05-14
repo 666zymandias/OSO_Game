@@ -51,7 +51,7 @@ public class OsoGameMultijugadorGUI extends javax.swing.JFrame implements Action
     private ObjectOutputStream outJuego;
     
     private ClienteChatHilo leeChat;
-    OsoGameThread hiloJuego;
+    OsoGameHilo hiloJuego;
             
     private int filas;
     private int columnas;
@@ -254,7 +254,7 @@ public class OsoGameMultijugadorGUI extends javax.swing.JFrame implements Action
             leeInformacionInicial();
             
             //hilo para leer los nuevos estados
-            hiloJuego = new OsoGameThread(inJuego);
+            hiloJuego = new OsoGameHilo(inJuego);
             hiloJuego.start();
                 
             //hilo de chat
@@ -468,11 +468,11 @@ public class OsoGameMultijugadorGUI extends javax.swing.JFrame implements Action
     private javax.swing.JTextField textoUsuario;
     // End of variables declaration//GEN-END:variables
    
-    private class OsoGameThread extends Thread {
+    private class OsoGameHilo extends Thread {
 
         private final ObjectInputStream objectIS;
 
-        public OsoGameThread(ObjectInputStream objectIS) {
+        public OsoGameHilo(ObjectInputStream objectIS) {
             this.objectIS = objectIS;
         }
 
