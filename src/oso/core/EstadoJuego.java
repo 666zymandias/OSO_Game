@@ -11,6 +11,7 @@ import java.io.Serializable;
  * @author felipe
  */
 public class EstadoJuego implements Serializable{
+    private static final long serialVersionUID = 20L;
     
     private final PartidaMultijugador partida;
     private int turnoActual;

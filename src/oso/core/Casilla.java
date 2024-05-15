@@ -11,6 +11,8 @@ import java.io.Serializable;
  * @author felipe
  */
 public class Casilla implements Serializable {
+    private static final long serialVersionUID = 13L;
+    
     private char valor;
     private boolean Valida;
     private int x;

@@ -40,8 +40,8 @@ public class OsoGameMultijugadorGUI extends javax.swing.JFrame implements Action
     private EstadoJuego estado;
 
     private final String hostAddr = "127.0.0.1";
-    private final int portJuego = 12000;
-    private final int portChat = 13000;
+    private final int portJuego = 15000;
+    private final int portChat = 16000;
     private Socket socketJuego;
     private Socket socketChat;
     
@@ -57,6 +57,9 @@ public class OsoGameMultijugadorGUI extends javax.swing.JFrame implements Action
     private int columnas;
     private String user;
     private int idJugador;
+    
+    private int ososPropios;
+    private int ososRivales;
     
     
     public OsoGameMultijugadorGUI() {
@@ -152,9 +155,11 @@ public class OsoGameMultijugadorGUI extends javax.swing.JFrame implements Action
         textoOsosRivales.setText("0");
 
         labelOsosPropios.setFont(new java.awt.Font("Liberation Sans", 0, 16)); // NOI18N
+        labelOsosPropios.setForeground(new java.awt.Color(0, 153, 255));
         labelOsosPropios.setText("Osos propios");
 
         labelOsosRivales.setFont(new java.awt.Font("Liberation Sans", 0, 16)); // NOI18N
+        labelOsosRivales.setForeground(new java.awt.Color(255, 0, 0));
         labelOsosRivales.setText("Osos rivales");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -252,6 +257,7 @@ public class OsoGameMultijugadorGUI extends javax.swing.JFrame implements Action
             }
             
             leeInformacionInicial();
+            
             
             //hilo para leer los nuevos estados
             hiloJuego = new OsoGameHilo(inJuego);
@@ -397,31 +403,56 @@ public class OsoGameMultijugadorGUI extends javax.swing.JFrame implements Action
         }
     }
     
-    private void pintaBotones(Set<Casilla> casillasJugada) {
+    private void pintaBotones(Set<Casilla> casillasJugada, Jugada jugada) {
         for (int i= 0; i< listaBotonesJugadas.size(); i++) {
             BotonOso boton = listaBotonesJugadas.get(i);
             for (Casilla casilla: casillasJugada) {
                 if (casilla.getX() ==  boton.getFila() && casilla.getY() == boton.getColumna()) {
-                    boton.setForeground(Color.blue);
+                    if (jugada.getJugador() == idJugador)
+                        boton.setForeground(Color.blue);
+                    else
+                        boton.setForeground(Color.red);
                 }
             }
         }
     }
     
-    private void pintaJugada(EstadoJuego estado) {
+    private void pintaLetraOso(Jugada jugada) {
+        Component[] components = panelJuego.getComponents();
+        for (Component component : components) {
+            if (component instanceof BotonOso) {
+                BotonOso button = (BotonOso) component;
+                if (button.getFila() == jugada.getFila() && button.getColumna() == jugada.getColumna()) {
+                    button.setText(String.valueOf(jugada.getLetra()));
+                    button.setLetra(String.valueOf(jugada.getLetra()));
+                    button.setEnabled(false);
+                    break;
+                }
+            }
+        }
+        panelJuego.revalidate();
+    }
+    
+    private void pintaJugada(Jugada jugada) {
         PartidaMultijugador partidaOso = estado.getPartidaOso();
         
-        pintaBotones(partidaOso.getTablero().getCasillasJugada());
+        pintaLetraOso(jugada);      
+        pintaBotones(partidaOso.getTablero().getCasillasJugada(), jugada);
+        
         panelJuego.revalidate();
         
-        int ososPropios = estado.getPartidaOso().getOsosJ1();
-        int ososRivales = estado.getPartidaOso().getOsosJ2();
+        if (idJugador == 0) {
+            ososPropios = estado.getPartidaOso().getOsosJ1();
+            ososRivales = estado.getPartidaOso().getOsosJ2();
+        }
+        else {
+            ososPropios = estado.getPartidaOso().getOsosJ2();
+            ososRivales = estado.getPartidaOso().getOsosJ1();
+        }
         
         textoOsosPropios.setText(String.valueOf(ososPropios));
         textoOsosRivales.setText(String.valueOf(ososRivales));
 
-        botonOsoActual.setEnabled(false);
-        botonOsoActual = null;
         
         if (partidaOso.finPartida()) {
             partidaOso.imprimeEstadoPartida();
@@ -447,7 +478,8 @@ public class OsoGameMultijugadorGUI extends javax.swing.JFrame implements Action
         for (Component component : components) {
             if (component instanceof BotonOso) {
                 BotonOso button = (BotonOso) component;
-                button.setEnabled(unlock);
+                if (! (button.getLetra().equals("S") || button.getLetra().equals("O")))
+                    button.setEnabled(unlock);
             }
         }
     }
@@ -478,16 +510,36 @@ public class OsoGameMultijugadorGUI extends javax.swing.JFrame implements Action
 
         @Override
         public void run() {
+            
+            //jugadas
             try {
-                for (Object nuevoEstado; (nuevoEstado = objectIS.readObject()) != null;) {
-                    estado = (EstadoJuego) nuevoEstado;
-                    estado.getPartidaOso().imprimeEstadoPartida();
+                for (Object input; (input = objectIS.readObject()) != null;) {
+                    Jugada nuevaJugada = (Jugada) input;
+                    estado.getPartidaOso().realizaJugada(nuevaJugada);
+                    estado.siguienteTurno();
+                    pintaJugada(nuevaJugada);
                     if (estado.getTurnoActual() == idJugador)
                         desbloqueaTablero(true);
-                    pintaJugada(estado);
                 }
             } catch (IOException | ClassNotFoundException ex) {
+                manejaExcepcion(ex);
             }
+
+//            //estados
+//            try {
+//                for (Object input; (input = objectIS.readObject()) != null;) {
+//                    EstadoJuego nuevoEstado = (EstadoJuego) input;
+//                    System.out.println("Estado en cliente despues de deserializar: ");
+//                    nuevoEstado.getPartidaOso().imprimeEstadoPartida();
+//                    if (estado.getTurnoActual() == idJugador)
+//                        desbloqueaTablero(true);
+////                    pintaJugada(estado);
+//                }
+//            } catch (IOException | ClassNotFoundException ex) {
+//                manejaExcepcion(ex);
+//            }
+            
+            
         }
     }
 }

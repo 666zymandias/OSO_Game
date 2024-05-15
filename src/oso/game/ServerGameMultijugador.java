@@ -21,14 +21,14 @@ import oso.utils.ServerJuegoHilo;
  */
 public class ServerGameMultijugador extends Thread{
 
-    private final int portJuego = 12000;
+    private final int portJuego = 15000;
     private final int filas;
     private final int columnas;
     final List<ServerJuegoHilo> clientes = new LinkedList<>();
     private EstadoJuego estadoJuego;
     
     public static void main(String[] args) {
-        final int portChat = 13000;
+        final int portChat = 16000;
         ServerGameMultijugador server = new ServerGameMultijugador(3, 3);
         ServerChat serverChat = new ServerChat(portChat);
         serverChat.start();
@@ -44,7 +44,7 @@ public class ServerGameMultijugador extends Thread{
     public void run() {
         int jugador = 0;
         
-        estadoJuego = new EstadoJuego(filas, columnas, 0, 0);
+        estadoJuego = new EstadoJuego(filas, columnas, jugador, 0);
         
         try {
             ServerSocket serverSocket = new ServerSocket(portJuego);

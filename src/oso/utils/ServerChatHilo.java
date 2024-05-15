@@ -19,7 +19,6 @@ public class ServerChatHilo extends Thread{
         this.clients = clients;
     }
 
-    //only one thread at the time can send messages through the socket
     synchronized public void sendMsg(String msg){
         try {
             out.writeUTF(msg);

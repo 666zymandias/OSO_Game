@@ -9,6 +9,8 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class Tablero implements Serializable{
+    private static final long serialVersionUID = 12L;
+    
     private final Casilla[][] matrizOsos;
     private final Set<Casilla> casillasJugada = new HashSet<>();
 

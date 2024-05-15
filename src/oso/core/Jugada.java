@@ -7,6 +7,8 @@ package oso.core;
 import java.io.Serializable;
 
 public class Jugada implements Serializable{
+    private static final long serialVersionUID = 100L;
+    
     private int fila;
     private int columna;
     private char letra;

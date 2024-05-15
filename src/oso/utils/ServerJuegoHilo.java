@@ -12,84 +12,106 @@ import oso.core.Jugada;
 import oso.game.ServerGameMultijugador;
 
 public class ServerJuegoHilo extends Thread{
-        final List<ServerJuegoHilo> clientes;
-        final Socket socket;
-        ObjectInputStream in;
-        ObjectOutputStream out;
-        int jugador;
-        EstadoJuego estadoJuego;
+    private final List<ServerJuegoHilo> clientes;
+    private final Socket socket;
+    private ObjectInputStream in;
+    private ObjectOutputStream out;
+    private final int jugador;
+    private final EstadoJuego estadoJuego;
 
-        public ServerJuegoHilo(List<ServerJuegoHilo> clientes, Socket socket, int jugador, EstadoJuego estadoJuego) {
-            this.clientes = clientes;
-            this.socket = socket;
-            this.jugador = jugador;
-            this.estadoJuego = estadoJuego;
-        }
-        
-        synchronized public void sendEstadoActual(EstadoJuego estado) {
-            try {
-                out.writeObject(estado);
-                out.flush();
-            } catch (IOException ex ) {
-                Logger.getLogger(ServerGameMultijugador.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        }
-        
-        @Override
-        public void run() {
-            try {
-                in = new ObjectInputStream(socket.getInputStream());
-                out = new ObjectOutputStream(socket.getOutputStream());
-                
-                System.out.println("Conexion con cliente (" +jugador+ ") a juego desde " + 
-                        socket.getInetAddress() + ": " + socket.getPort());
-                
-                sendInformacionInicial();
-                
-                synchronized (clientes) { 
-                    clientes.add(this);
-                }
+    public ServerJuegoHilo(List<ServerJuegoHilo> clientes, Socket socket, int jugador, EstadoJuego estadoJuego) {
+        this.clientes = clientes;
+        this.socket = socket;
+        this.jugador = jugador;
+        this.estadoJuego = estadoJuego;
+    }
 
-                for (Object inputJugada; (inputJugada = in.readObject()) != null;) {
-                    
-                    try {
-                        Jugada jugada = (Jugada) inputJugada;
-                        estadoJuego.getPartidaOso().realizaJugada(jugada);
-                        estadoJuego.siguienteTurno();
-                        
-                        synchronized (clientes) {
-                            clientes.forEach(c -> {
-                                c.sendEstadoActual(estadoJuego);
-                            });
-                        }
-                        
-                    }catch (Exception ex) {
-                    
-                    }
-                }
-
-            } catch (IOException | SecurityException | IllegalArgumentException | NullPointerException | ClassNotFoundException ex) {
-                Logger.getLogger(ServerGameMultijugador.class.getName()).log(Level.SEVERE, null, ex);
-            } finally {
-                try{ 
-                    socket.close(); 
-                } catch(IOException ex){
-                }
-                synchronized (clientes) {
-                    clientes.remove(this);
-                }
-            }
-        }
-
-        private void sendInformacionInicial() {
-            try {
-                out.writeInt(jugador);
-                out.flush();
-            } catch (IOException ex) {
-                Logger.getLogger(ServerGameMultijugador.class.getName()).log(Level.SEVERE, null, ex);
-            }
-            
-            sendEstadoActual(estadoJuego);
-            
+    synchronized public void sendEstado(EstadoJuego estado) {
+        try {
+            out.writeObject(estado);
+            out.flush();
+        } catch (IOException ex ) {
+            Logger.getLogger(ServerGameMultijugador.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
+    
+    synchronized public void sendJugada(Jugada jugada) {
+        try {
+            out.writeObject(jugada);
+            out.flush();
+        } catch (IOException ex ) {
+            Logger.getLogger(ServerGameMultijugador.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    @Override
+    public void run() {
+        try {
+            in = new ObjectInputStream(socket.getInputStream());
+            out = new ObjectOutputStream(socket.getOutputStream());
+
+            System.out.println("Conexion con cliente (" +jugador+ ") a juego desde " + 
+                    socket.getInetAddress() + ": " + socket.getPort());
+           
+            synchronized (clientes) { 
+                clientes.add(this);
+            }
+            
+            sendInformacionInicial();
+
+            //jugadas
+            for (Object inputJugada; (inputJugada = in.readObject()) != null;) {
+
+                try {
+                    Jugada jugada = (Jugada) inputJugada;
+
+                    synchronized (clientes) {
+                        clientes.forEach(c -> c.sendJugada(jugada));
+                    }
+
+                }catch (Exception ex) {
+                    Logger.getLogger(ServerGameMultijugador.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+            
+//            //estados
+//            for (Object inputJugada; (inputJugada = in.readObject()) != null;) {
+//
+//                try {
+//                    Jugada jugada = (Jugada) inputJugada;
+//                    estadoJuego.getPartidaOso().realizaJugada(jugada);
+//
+//                    synchronized (clientes) {
+//                        clientes.forEach(c -> c.sendEstado(estadoJuego));
+//                    }
+//
+//                }catch (Exception ex) {
+//                    Logger.getLogger(ServerGameMultijugador.class.getName()).log(Level.SEVERE, null, ex);
+//                }
+//            }
+
+        } catch (IOException | SecurityException | IllegalArgumentException | NullPointerException | ClassNotFoundException ex) {
+            Logger.getLogger(ServerGameMultijugador.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            try{ 
+                socket.close(); 
+            } catch(IOException ex){
+            }
+            synchronized (clientes) {
+                clientes.remove(this);
+            }
+        }
+    }
+
+    private void sendInformacionInicial() {
+        try {
+            out.writeInt(jugador);
+            out.flush();
+        } catch (IOException ex) {
+            Logger.getLogger(ServerGameMultijugador.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        sendEstado(estadoJuego);
+
+    }
+}

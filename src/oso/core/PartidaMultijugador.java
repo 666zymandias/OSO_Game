@@ -11,10 +11,11 @@ import java.io.Serializable;
  * @author felipe
  */
 public class PartidaMultijugador extends Partida implements Serializable{
+    private static final long serialVersionUID = 10L;
     
     private int ososJ1 = 0;
     private int ososJ2 = 0;
-    
+        
     public PartidaMultijugador(int filas, int columnas) {
         super(filas, columnas);
     }
