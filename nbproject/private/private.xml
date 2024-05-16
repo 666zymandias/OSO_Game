@@ -3,20 +3,16 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/home/felipe/NetBeansProjects/Santos_Garzon_Felipe_OSO/src/oso/utils/ServerChatHilo.java</file>
-            <file>file:/home/felipe/NetBeansProjects/Santos_Garzon_Felipe_OSO/src/oso/core/Tablero.java</file>
-            <file>file:/home/felipe/NetBeansProjects/Santos_Garzon_Felipe_OSO/src/oso/core/Jugada.java</file>
-            <file>file:/home/felipe/NetBeansProjects/Santos_Garzon_Felipe_OSO/src/oso/core/EstadoJuego.java</file>
-            <file>file:/home/felipe/NetBeansProjects/Santos_Garzon_Felipe_OSO/src/oso/game/OsoGameIndividualGUI.java</file>
-            <file>file:/home/felipe/NetBeansProjects/Santos_Garzon_Felipe_OSO/src/oso/core/Casilla.java</file>
             <file>file:/home/felipe/NetBeansProjects/Santos_Garzon_Felipe_OSO/src/oso/utils/ServerJuegoHilo.java</file>
             <file>file:/home/felipe/NetBeansProjects/Santos_Garzon_Felipe_OSO/src/oso/game/ServerGameMultijugador.java</file>
             <file>file:/home/felipe/NetBeansProjects/Santos_Garzon_Felipe_OSO/src/oso/core/PartidaMultijugador.java</file>
-            <file>file:/home/felipe/NetBeansProjects/Santos_Garzon_Felipe_OSO/src/oso/utils/ClienteChatHilo.java</file>
             <file>file:/home/felipe/NetBeansProjects/Santos_Garzon_Felipe_OSO/src/oso/game/OsoGameMultijugadorGUI.java</file>
-            <file>file:/home/felipe/NetBeansProjects/Santos_Garzon_Felipe_OSO/src/oso/chat/ClienteChatGUI.java</file>
+            <file>file:/home/felipe/NetBeansProjects/Santos_Garzon_Felipe_OSO/src/oso/core/Tablero.java</file>
+            <file>file:/home/felipe/NetBeansProjects/Santos_Garzon_Felipe_OSO/src/oso/core/Jugada.java</file>
+            <file>file:/home/felipe/NetBeansProjects/Santos_Garzon_Felipe_OSO/src/oso/game/OsoGameConsole.java</file>
             <file>file:/home/felipe/NetBeansProjects/Santos_Garzon_Felipe_OSO/src/oso/core/Partida.java</file>
-            <file>file:/home/felipe/NetBeansProjects/Santos_Garzon_Felipe_OSO/src/oso/chat/ServerChat.java</file>
+            <file>file:/home/felipe/NetBeansProjects/Santos_Garzon_Felipe_OSO/src/oso/core/EstadoJuego.java</file>
+            <file>file:/home/felipe/NetBeansProjects/Santos_Garzon_Felipe_OSO/src/oso/game/OsoGameIndividualGUI.java</file>
         </group>
     </open-files>
 </project-private>

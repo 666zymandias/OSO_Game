@@ -11,7 +11,7 @@ import java.io.Serializable;
 public class Partida implements Serializable {
     private static final long serialVersionUID = 11L;
     
-    protected int totalOsos = 0;
+    private int totalOsos = 0;
     protected final Tablero tableroOso;
 
     public Partida(int filas, int columnas) {

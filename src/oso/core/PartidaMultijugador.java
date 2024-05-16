@@ -32,20 +32,16 @@ public class PartidaMultijugador extends Partida implements Serializable{
     public void realizaJugada(Jugada jugada) {
         if (esValida(jugada)) {
             
-            System.out.println(jugada);
             int x = jugada.getFila();
             int y = jugada.getColumna();
             char letra =  jugada.getLetra();
             tableroOso.ponPieza(jugada.getFila(), jugada.getColumna(), letra);
             if (jugada.getJugador() == 0) {
                 ososJ1 += tableroOso.contarOsosDesdeCasilla(x, y, letra);
-                totalOsos += ososJ1;
             }
             else {
                 ososJ2 += tableroOso.contarOsosDesdeCasilla(x, y, letra); 
-                totalOsos += ososJ2;
             }
-            imprimeEstadoPartida();
         }
         else
             System.out.println("Jugada invalida, pon tu pieza en una casilla libre!");

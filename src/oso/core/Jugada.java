@@ -13,7 +13,7 @@ public class Jugada implements Serializable{
     private int columna;
     private char letra;
     private int jugador = -1;
-
+    private String nombrePJ;
     
     public Jugada(int fila, int columna, char letra) {
         this.fila = fila;
@@ -21,11 +21,12 @@ public class Jugada implements Serializable{
         this.letra = letra;
     }
     
-    public Jugada(int fila, int columna, char letra, int jugador) {
+    public Jugada(int fila, int columna, char letra, int jugador, String nombrePJ) {
         this.fila = fila;
         this.columna = columna;
         this.letra = letra;
         this.jugador = jugador;
+        this.nombrePJ = nombrePJ;
     }
 
     public int getFila() {
@@ -54,6 +55,10 @@ public class Jugada implements Serializable{
 
     public int getJugador() {
         return jugador;
+    }
+
+    public String getNombrePJ() {
+        return nombrePJ;
     }
     
     @Override

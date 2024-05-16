@@ -1,5 +1,6 @@
 package oso.utils;
 
+import java.io.EOFException;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -74,22 +75,8 @@ public class ServerJuegoHilo extends Thread{
                 }
             }
             
-//            //estados
-//            for (Object inputJugada; (inputJugada = in.readObject()) != null;) {
-//
-//                try {
-//                    Jugada jugada = (Jugada) inputJugada;
-//                    estadoJuego.getPartidaOso().realizaJugada(jugada);
-//
-//                    synchronized (clientes) {
-//                        clientes.forEach(c -> c.sendEstado(estadoJuego));
-//                    }
-//
-//                }catch (Exception ex) {
-//                    Logger.getLogger(ServerGameMultijugador.class.getName()).log(Level.SEVERE, null, ex);
-//                }
-//            }
-
+        }catch (EOFException ex) {
+            Logger.getLogger(ServerGameMultijugador.class.getName()).log(Level.SEVERE, null, ex);
         } catch (IOException | SecurityException | IllegalArgumentException | NullPointerException | ClassNotFoundException ex) {
             Logger.getLogger(ServerGameMultijugador.class.getName()).log(Level.SEVERE, null, ex);
         } finally {

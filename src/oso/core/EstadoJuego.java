@@ -16,11 +16,13 @@ public class EstadoJuego implements Serializable{
     private final PartidaMultijugador partida;
     private int turnoActual;
     private int totalJugadores;
+    private Jugada ultimaJugada;
 
     public EstadoJuego(int filas, int columnas, int turnoActual, int totalJugadores) {
         this.partida = new PartidaMultijugador(filas, columnas);
         this.turnoActual = turnoActual;
         this.totalJugadores = totalJugadores;
+        ultimaJugada = null;
     }
 
     public PartidaMultijugador getPartidaOso() {
@@ -37,6 +39,14 @@ public class EstadoJuego implements Serializable{
     
     public void aumentaJugadoresEn1() {
         this.totalJugadores ++;
+    }
+
+    public Jugada getUltimaJugada() {
+        return ultimaJugada;
+    }
+
+    public void setUltimaJugada(Jugada ultimaJugada) {
+        this.ultimaJugada = ultimaJugada;
     }
     
     public void siguienteTurno() {

@@ -313,6 +313,7 @@ public class OsoGameIndividualGUI extends javax.swing.JFrame implements ActionLi
     }
     
     private void disposeJuego() {
+        dialogFinPartida.dispose();
         dispose();
         System.exit(0);
     }
