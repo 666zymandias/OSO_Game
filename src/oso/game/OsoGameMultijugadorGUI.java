@@ -26,7 +26,6 @@ import oso.core.BotonOso;
 import oso.core.Casilla;
 import oso.core.EstadoJuego;
 import oso.core.Jugada;
-import oso.core.PartidaMultijugador;
 import oso.utils.CustomExceptionHandler;
 
 /**
@@ -39,16 +38,16 @@ public class OsoGameMultijugadorGUI extends javax.swing.JFrame implements Action
     private final List<BotonOso> listaBotonesJugadas = new ArrayList<>();
     private EstadoJuego estado;
 
-    private final String hostAddr = "127.0.0.1";
-    private final int portJuego = 15000;
-    private final int portChat = 16000;
+    private final String hostAddr = "localhost";
+    private final int puertoJuego = 15000;
+    private final int puertoChat = 16000;
     private Socket socketJuego;
     private Socket socketChat;
     
-    private DataInputStream inChat;
-    private DataOutputStream outChat;
-    private ObjectInputStream inJuego;
-    private ObjectOutputStream outJuego;
+    private DataInputStream dinChat;
+    private DataOutputStream doutChat;
+    private ObjectInputStream oinJuego;
+    private ObjectOutputStream ooutJuego;
     
     private ClienteChatHilo leeChat;
     OsoGameHilo hiloJuego;
@@ -241,16 +240,16 @@ public class OsoGameMultijugadorGUI extends javax.swing.JFrame implements Action
             botonConectar.setEnabled(false);
             
             try {
-                socketJuego = new Socket(hostAddr, portJuego); //socket para las jugadas del tablero
-                socketChat = new Socket(hostAddr, portChat); //socket para el chat
+                socketJuego = new Socket(hostAddr, puertoJuego); //socket para las jugadas del tablero
+                socketChat = new Socket(hostAddr, puertoChat); //socket para el chat
                                 
                 //streams para juego
-                outJuego = new ObjectOutputStream(socketJuego.getOutputStream());
-                inJuego = new ObjectInputStream(socketJuego.getInputStream());
+                ooutJuego = new ObjectOutputStream(socketJuego.getOutputStream());
+                oinJuego = new ObjectInputStream(socketJuego.getInputStream());
                 
                 //streams para el chat
-                outChat = new DataOutputStream(socketChat.getOutputStream());
-                inChat = new DataInputStream(socketChat.getInputStream());
+                doutChat = new DataOutputStream(socketChat.getOutputStream());
+                dinChat = new DataInputStream(socketChat.getInputStream());
                               
             } catch (IOException | IllegalArgumentException | NullPointerException ex) {
                 manejaExcepcion(ex);
@@ -260,15 +259,15 @@ public class OsoGameMultijugadorGUI extends javax.swing.JFrame implements Action
             
             
             //hilo para leer los nuevos estados
-            hiloJuego = new OsoGameHilo(inJuego);
+            hiloJuego = new OsoGameHilo(oinJuego);
             hiloJuego.start();
                 
             //hilo de chat
-            leeChat = new ClienteChatHilo(inChat, areaChat);
+            leeChat = new ClienteChatHilo(dinChat, areaChat);
             leeChat.start();
             
             try {
-                outChat.writeUTF("Usuario "+ user+ " conectado");
+                doutChat.writeUTF("Usuario "+ user+ " conectado");
             } catch (IOException ex) {
                 Logger.getLogger(OsoGameMultijugadorGUI.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -289,8 +288,8 @@ public class OsoGameMultijugadorGUI extends javax.swing.JFrame implements Action
             textoMensaje.setText("");
             String mensaje = user +" > "+ texto;
             try {
-                outChat.writeUTF(mensaje);
-                outChat.flush();
+                doutChat.writeUTF(mensaje);
+                doutChat.flush();
             } catch (IOException ex) {
                 manejaExcepcion(ex);
             }
@@ -305,16 +304,15 @@ public class OsoGameMultijugadorGUI extends javax.swing.JFrame implements Action
             String letra = botonOsoActual.getText();
             
             botonOsoActual.setLetra(letra);
-            listaBotonesJugadas.add(botonOsoActual);
             
             Jugada jugada = new Jugada(x, y, letra.charAt(0), idJugador);
             
             try {
-                outJuego.writeObject(jugada);
+                ooutJuego.writeObject(jugada);
             } catch (IOException ex) {
                 manejaExcepcion(ex);
             }
-            
+            botonOsoActual = null;
             desbloqueaTablero(false);
         }
     }//GEN-LAST:event_botonEnviarJugadaActionPerformed
@@ -354,8 +352,8 @@ public class OsoGameMultijugadorGUI extends javax.swing.JFrame implements Action
     
     private void leeInformacionInicial() {
         try {
-            idJugador = inJuego.readInt();
-            estado = (EstadoJuego) inJuego.readObject();
+            idJugador = oinJuego.readInt();
+            estado = (EstadoJuego) oinJuego.readObject();
             
             filas = estado.getPartidaOso().getTablero().getFilas();
             columnas = estado.getPartidaOso().getTablero().getColumnas();
@@ -421,11 +419,12 @@ public class OsoGameMultijugadorGUI extends javax.swing.JFrame implements Action
         Component[] components = panelJuego.getComponents();
         for (Component component : components) {
             if (component instanceof BotonOso) {
-                BotonOso button = (BotonOso) component;
-                if (button.getFila() == jugada.getFila() && button.getColumna() == jugada.getColumna()) {
-                    button.setText(String.valueOf(jugada.getLetra()));
-                    button.setLetra(String.valueOf(jugada.getLetra()));
-                    button.setEnabled(false);
+                BotonOso botonOso = (BotonOso) component;
+                if (botonOso.getFila() == jugada.getFila() && botonOso.getColumna() == jugada.getColumna()) {
+                    listaBotonesJugadas.add(botonOso);
+                    botonOso.setText(String.valueOf(jugada.getLetra()));
+                    botonOso.setLetra(String.valueOf(jugada.getLetra()));
+                    botonOso.setEnabled(false);
                     break;
                 }
             }
@@ -434,10 +433,10 @@ public class OsoGameMultijugadorGUI extends javax.swing.JFrame implements Action
     }
     
     private void pintaJugada(Jugada jugada) {
-        PartidaMultijugador partidaOso = estado.getPartidaOso();
         
         pintaLetraOso(jugada);      
-        pintaBotones(partidaOso.getTablero().getCasillasJugada(), jugada);
+        pintaBotones(estado.getPartidaOso().getTablero().getCasillasJugada(), jugada);
+        estado.getPartidaOso().getTablero().bloqueaJugada();
         
         panelJuego.revalidate();
         
@@ -454,8 +453,8 @@ public class OsoGameMultijugadorGUI extends javax.swing.JFrame implements Action
         textoOsosRivales.setText(String.valueOf(ososRivales));
 
         
-        if (partidaOso.finPartida()) {
-            partidaOso.imprimeEstadoPartida();
+        if (estado.getPartidaOso().finPartida()) {
+            estado.getPartidaOso().imprimeEstadoPartida();
             botonEnviarJugada.setEnabled(false);
         }
     }

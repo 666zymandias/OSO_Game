@@ -21,17 +21,18 @@ import oso.utils.ServerJuegoHilo;
  */
 public class ServerGameMultijugador extends Thread{
 
-    private final int portJuego = 15000;
+    private final int puertoJuego = 15000;
+    private final int puertoChat = 16000;
+    
     private final int filas;
     private final int columnas;
+    
     final List<ServerJuegoHilo> clientes = new LinkedList<>();
     private EstadoJuego estadoJuego;
     
     public static void main(String[] args) {
-        final int portChat = 16000;
         ServerGameMultijugador server = new ServerGameMultijugador(3, 3);
-        ServerChat serverChat = new ServerChat(portChat);
-        serverChat.start();
+        
         server.start();
     }
 
@@ -44,12 +45,15 @@ public class ServerGameMultijugador extends Thread{
     public void run() {
         int jugador = 0;
         
+        ServerChat serverChat = new ServerChat(puertoChat);
+        serverChat.start();
+        
         estadoJuego = new EstadoJuego(filas, columnas, jugador, 0);
         
         try {
-            ServerSocket serverSocket = new ServerSocket(portJuego);
+            ServerSocket serverSocket = new ServerSocket(puertoJuego);
             
-            System.out.println("Servidor juego del OSO iniciado en puerto: " + portJuego);
+            System.out.println("Servidor juego del OSO iniciado en puerto: " + puertoJuego);
             
             while (! estadoJuego.getPartidaOso().finPartida()) {
                 
