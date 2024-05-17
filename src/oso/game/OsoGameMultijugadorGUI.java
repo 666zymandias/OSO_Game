@@ -10,6 +10,8 @@ import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.DataInputStream;
@@ -23,6 +25,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JOptionPane;
 import oso.utils.ClienteChatHilo;
 import oso.core.BotonOso;
 import oso.core.Casilla;
@@ -50,7 +53,6 @@ public class OsoGameMultijugadorGUI extends javax.swing.JFrame implements Action
     
     private DataInputStream dinChat;
     private DataOutputStream doutChat;
-    private ObjectInputStream oinJuego;
     private ObjectOutputStream ooutJuego;
     
     private ClienteChatHilo leeChat;
@@ -74,27 +76,21 @@ public class OsoGameMultijugadorGUI extends javax.swing.JFrame implements Action
         this.setResizable(false);
         setLocationRelativeTo(null);
         
-        dialogInicio.setLocationRelativeTo(null);
-        dialogInicio.setVisible(true);
-        dialogInicio.addWindowListener(new WindowAdapter() {
-            @Override
-            public void windowClosing(WindowEvent e) {
-                disposeJuego();
-            }
-        });
-        
         dialogConfig.addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {
-                user = textUsuarioConfig.getText();
+                guardaInformacion();
                 
-                hostJuego = textSvOSO.getText();
-                puertoJuego = Integer.parseInt(textPortOso.getText());
-                
-                hostChat = textSvChat.getText();
-                puertoChat = Integer.parseInt(textPortChat.getText());
-                
-                textoUsuario.setText(user);
+            }
+        });
+        
+        dialogConfig.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyPressed(KeyEvent e) {
+                if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+                    guardaInformacion();
+                    dialogConfig.dispose();
+                }
             }
         });
         
@@ -124,14 +120,9 @@ public class OsoGameMultijugadorGUI extends javax.swing.JFrame implements Action
         labelOsosRivalFin = new javax.swing.JLabel();
         botonFinPartida = new javax.swing.JButton();
         labelGanador = new javax.swing.JLabel();
-        dialogInicio = new javax.swing.JDialog();
-        jMenuBar2 = new javax.swing.JMenuBar();
-        jMenu2 = new javax.swing.JMenu();
-        mitemConectar1 = new javax.swing.JMenuItem();
-        mitemConfig1 = new javax.swing.JMenuItem();
         dialogConfig = new javax.swing.JDialog();
         labelUserConfig = new javax.swing.JLabel();
-        textUsuarioConfig = new javax.swing.JTextField();
+        textoUsuarioConfig = new javax.swing.JTextField();
         jLabel2 = new javax.swing.JLabel();
         textSvOSO = new javax.swing.JTextField();
         jLabel3 = new javax.swing.JLabel();
@@ -140,9 +131,6 @@ public class OsoGameMultijugadorGUI extends javax.swing.JFrame implements Action
         textSvChat = new javax.swing.JTextField();
         jLabel5 = new javax.swing.JLabel();
         textPortChat = new javax.swing.JTextField();
-        labelUsuario = new javax.swing.JLabel();
-        textoUsuario = new javax.swing.JTextField();
-        botonConectar = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         areaChat = new javax.swing.JTextArea();
         textoMensaje = new javax.swing.JTextField();
@@ -153,25 +141,32 @@ public class OsoGameMultijugadorGUI extends javax.swing.JFrame implements Action
         textoOsosRivales = new javax.swing.JTextField();
         labelOsosPropios = new javax.swing.JLabel();
         labelOsosRivales = new javax.swing.JLabel();
+        jLabel8 = new javax.swing.JLabel();
+        jMenuBar3 = new javax.swing.JMenuBar();
+        menuPartida = new javax.swing.JMenu();
+        conectar = new javax.swing.JMenuItem();
+        config = new javax.swing.JMenuItem();
 
         dialogFinPartida.setTitle("Fin juego");
-        dialogFinPartida.setMaximumSize(new java.awt.Dimension(340, 180));
         dialogFinPartida.setMinimumSize(new java.awt.Dimension(340, 180));
 
-        labelFinPartida.setFont(new java.awt.Font("sansserif", 0, 16)); // NOI18N
+        labelFinPartida.setFont(new java.awt.Font("sansserif", 1, 16)); // NOI18N
         labelFinPartida.setText("Fin de Partida !");
 
+        labelOsosPropiosFin.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         labelOsosPropiosFin.setText("Tus OSOs conseguidos: ");
 
+        labelOsosRivalFin.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         labelOsosRivalFin.setText("OSOs rivales: ");
 
-        botonFinPartida.setText("salir");
+        botonFinPartida.setText("cerrar");
         botonFinPartida.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 botonFinPartidaActionPerformed(evt);
             }
         });
 
+        labelGanador.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         labelGanador.setText("Ha ganado: ");
 
         javax.swing.GroupLayout dialogFinPartidaLayout = new javax.swing.GroupLayout(dialogFinPartida.getContentPane());
@@ -179,71 +174,37 @@ public class OsoGameMultijugadorGUI extends javax.swing.JFrame implements Action
         dialogFinPartidaLayout.setHorizontalGroup(
             dialogFinPartidaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(dialogFinPartidaLayout.createSequentialGroup()
-                .addGroup(dialogFinPartidaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(dialogFinPartidaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(dialogFinPartidaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(dialogFinPartidaLayout.createSequentialGroup()
+                            .addGap(30, 30, 30)
+                            .addComponent(labelOsosPropiosFin))
+                        .addGroup(dialogFinPartidaLayout.createSequentialGroup()
+                            .addGap(61, 61, 61)
+                            .addGroup(dialogFinPartidaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                .addComponent(labelOsosRivalFin)
+                                .addComponent(botonFinPartida))))
                     .addGroup(dialogFinPartidaLayout.createSequentialGroup()
-                        .addGap(21, 21, 21)
-                        .addGroup(dialogFinPartidaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(labelOsosRivalFin)
-                            .addComponent(labelOsosPropiosFin)
-                            .addComponent(labelGanador)))
-                    .addGroup(dialogFinPartidaLayout.createSequentialGroup()
-                        .addGap(130, 130, 130)
-                        .addComponent(botonFinPartida))
-                    .addGroup(dialogFinPartidaLayout.createSequentialGroup()
-                        .addGap(112, 112, 112)
-                        .addComponent(labelFinPartida)))
-                .addContainerGap(116, Short.MAX_VALUE))
+                        .addGap(88, 88, 88)
+                        .addGroup(dialogFinPartidaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(labelFinPartida)
+                            .addComponent(labelGanador, javax.swing.GroupLayout.PREFERRED_SIZE, 144, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                .addContainerGap(108, Short.MAX_VALUE))
         );
         dialogFinPartidaLayout.setVerticalGroup(
             dialogFinPartidaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(dialogFinPartidaLayout.createSequentialGroup()
                 .addGap(17, 17, 17)
                 .addComponent(labelFinPartida)
-                .addGap(18, 18, 18)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(labelOsosPropiosFin)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(labelOsosRivalFin)
-                .addGap(7, 7, 7)
-                .addComponent(labelGanador)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 21, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(labelGanador, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(botonFinPartida)
-                .addContainerGap())
-        );
-
-        dialogInicio.setMinimumSize(new java.awt.Dimension(400, 300));
-
-        jMenu2.setText("Partida");
-
-        mitemConectar1.setText("Conectar");
-        mitemConectar1.setMinimumSize(new java.awt.Dimension(104, 25));
-        mitemConectar1.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                mitemConectar1ActionPerformed(evt);
-            }
-        });
-        jMenu2.add(mitemConectar1);
-
-        mitemConfig1.setText("Configurar");
-        mitemConfig1.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                mitemConfig1ActionPerformed(evt);
-            }
-        });
-        jMenu2.add(mitemConfig1);
-
-        jMenuBar2.add(jMenu2);
-
-        dialogInicio.setJMenuBar(jMenuBar2);
-
-        javax.swing.GroupLayout dialogInicioLayout = new javax.swing.GroupLayout(dialogInicio.getContentPane());
-        dialogInicio.getContentPane().setLayout(dialogInicioLayout);
-        dialogInicioLayout.setHorizontalGroup(
-            dialogInicioLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 400, Short.MAX_VALUE)
-        );
-        dialogInicioLayout.setVerticalGroup(
-            dialogInicioLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 274, Short.MAX_VALUE)
+                .addContainerGap(30, Short.MAX_VALUE))
         );
 
         dialogConfig.setTitle("Configuracion");
@@ -276,7 +237,7 @@ public class OsoGameMultijugadorGUI extends javax.swing.JFrame implements Action
                 .addGroup(dialogConfigLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(jLabel4)
                     .addComponent(labelUserConfig)
-                    .addComponent(textUsuarioConfig, javax.swing.GroupLayout.PREFERRED_SIZE, 256, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(textoUsuarioConfig, javax.swing.GroupLayout.PREFERRED_SIZE, 256, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(dialogConfigLayout.createSequentialGroup()
                         .addComponent(textSvOSO, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -298,7 +259,7 @@ public class OsoGameMultijugadorGUI extends javax.swing.JFrame implements Action
                 .addContainerGap()
                 .addComponent(labelUserConfig)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(textUsuarioConfig, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(textoUsuarioConfig, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(jLabel2)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -318,17 +279,6 @@ public class OsoGameMultijugadorGUI extends javax.swing.JFrame implements Action
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Juego del Oso Cliente");
-
-        labelUsuario.setFont(new java.awt.Font("Liberation Sans", 0, 16)); // NOI18N
-        labelUsuario.setText("Usuario:");
-
-        botonConectar.setFont(new java.awt.Font("Liberation Sans", 0, 15)); // NOI18N
-        botonConectar.setText("Conectar");
-        botonConectar.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                botonConectarActionPerformed(evt);
-            }
-        });
 
         areaChat.setColumns(20);
         areaChat.setForeground(new java.awt.Color(0, 0, 255));
@@ -354,7 +304,7 @@ public class OsoGameMultijugadorGUI extends javax.swing.JFrame implements Action
         );
         panelJuegoLayout.setVerticalGroup(
             panelJuegoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 431, Short.MAX_VALUE)
+            .addGap(0, 443, Short.MAX_VALUE)
         );
 
         botonEnviarJugada.setFont(new java.awt.Font("Liberation Sans", 0, 15)); // NOI18N
@@ -381,54 +331,69 @@ public class OsoGameMultijugadorGUI extends javax.swing.JFrame implements Action
         labelOsosRivales.setForeground(new java.awt.Color(255, 0, 0));
         labelOsosRivales.setText("Osos rivales");
 
+        jLabel8.setText("Chat global");
+
+        menuPartida.setText("Partida");
+
+        conectar.setText("Conectar");
+        conectar.setMinimumSize(new java.awt.Dimension(104, 25));
+        conectar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                conectarActionPerformed(evt);
+            }
+        });
+        menuPartida.add(conectar);
+
+        config.setText("Configurar");
+        config.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                configActionPerformed(evt);
+            }
+        });
+        menuPartida.add(config);
+
+        jMenuBar3.add(menuPartida);
+
+        setJMenuBar(jMenuBar3);
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+            .addGroup(layout.createSequentialGroup()
                 .addGap(15, 15, 15)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(labelUsuario)
-                        .addGap(18, 18, 18)
-                        .addComponent(textoUsuario, javax.swing.GroupLayout.PREFERRED_SIZE, 198, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(botonConectar, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                             .addGroup(layout.createSequentialGroup()
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                    .addGroup(layout.createSequentialGroup()
-                                        .addComponent(botonEnviarJugada, javax.swing.GroupLayout.PREFERRED_SIZE, 88, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addGap(140, 140, 140)
-                                        .addComponent(labelOsosRivales))
-                                    .addComponent(labelOsosPropios))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                    .addComponent(textoOsosPropios, javax.swing.GroupLayout.DEFAULT_SIZE, 70, Short.MAX_VALUE)
-                                    .addComponent(textoOsosRivales)))
-                            .addComponent(panelJuego, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 396, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 27, Short.MAX_VALUE)
+                                .addComponent(botonEnviarJugada, javax.swing.GroupLayout.PREFERRED_SIZE, 88, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(140, 140, 140)
+                                .addComponent(labelOsosRivales))
+                            .addComponent(labelOsosPropios))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                                .addComponent(textoMensaje)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(botonEnviarMsg, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 321, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(0, 0, Short.MAX_VALUE)))
-                .addGap(11, 11, 11))
+                            .addComponent(textoOsosPropios, javax.swing.GroupLayout.DEFAULT_SIZE, 70, Short.MAX_VALUE)
+                            .addComponent(textoOsosRivales)))
+                    .addComponent(panelJuego, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 396, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 27, Short.MAX_VALUE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel8)
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                            .addComponent(textoMensaje)
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                            .addComponent(botonEnviarMsg, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 321, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGap(0, 11, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(7, 7, 7)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(labelUsuario)
-                    .addComponent(textoUsuario, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(botonConectar))
-                .addGap(15, 15, 15)
+                .addGap(12, 12, 12)
+                .addComponent(jLabel8)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(panelJuego, javax.swing.GroupLayout.DEFAULT_SIZE, 431, Short.MAX_VALUE)
+                    .addComponent(panelJuego, javax.swing.GroupLayout.DEFAULT_SIZE, 443, Short.MAX_VALUE)
                     .addComponent(jScrollPane1))
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
@@ -446,62 +411,11 @@ public class OsoGameMultijugadorGUI extends javax.swing.JFrame implements Action
                             .addComponent(labelOsosRivales)
                             .addComponent(textoMensaje, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(botonEnviarMsg))
-                        .addContainerGap(12, Short.MAX_VALUE))))
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
-
-    private void botonConectarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonConectarActionPerformed
-        
-        
-        user = textoUsuario.getText();
-        if (! user.equals("")){
-            
-            botonConectar.setEnabled(false);
-            
-            try {
-                socketJuego = new Socket(hostJuego, puertoJuego); //socket para las jugadas del tablero
-                socketChat = new Socket(hostChat, puertoChat); //socket para el chat
-                                
-                //streams para juego
-                ooutJuego = new ObjectOutputStream(socketJuego.getOutputStream());
-                oinJuego = new ObjectInputStream(socketJuego.getInputStream());
-                
-                //streams para el chat
-                doutChat = new DataOutputStream(socketChat.getOutputStream());
-                dinChat = new DataInputStream(socketChat.getInputStream());
-                              
-            } catch (IOException | IllegalArgumentException | NullPointerException ex) {
-                manejaExcepcion(ex);
-            }
-            
-            leeInformacionInicial();
-            
-            
-            //hilo para leer los nuevos estados
-            hiloJuego = new OsoGameHilo(oinJuego);
-            hiloJuego.start();
-                
-            //hilo de chat
-            leeChat = new ClienteChatHilo(dinChat, areaChat);
-            leeChat.start();
-            
-            try {
-                doutChat.writeUTF("Usuario "+ user+ " conectado");
-            } catch (IOException ex) {
-                Logger.getLogger(OsoGameMultijugadorGUI.class.getName()).log(Level.SEVERE, null, ex);
-            }
-
-            textoUsuario.setFocusable(false);
-            textoMensaje.setFocusable(true);
-            
-            if (estado.getTurnoActual() == idJugador) 
-                desbloqueaTablero(true);
-            
-        }
-       
-    }//GEN-LAST:event_botonConectarActionPerformed
 
     private void botonEnviarMsgActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonEnviarMsgActionPerformed
         String texto = textoMensaje.getText();
@@ -512,7 +426,7 @@ public class OsoGameMultijugadorGUI extends javax.swing.JFrame implements Action
                 doutChat.writeUTF(mensaje);
                 doutChat.flush();
             } catch (IOException ex) {
-                manejaExcepcion(ex);
+                manejaExcepcion(ex, ex.toString());
             }
         }
     }//GEN-LAST:event_botonEnviarMsgActionPerformed
@@ -531,7 +445,7 @@ public class OsoGameMultijugadorGUI extends javax.swing.JFrame implements Action
             try {
                 ooutJuego.writeObject(jugada);
             } catch (IOException ex) {
-                manejaExcepcion(ex);
+                manejaExcepcion(ex, null);
             }
             botonOsoActual = null;
             desbloqueaTablero(false);
@@ -539,21 +453,53 @@ public class OsoGameMultijugadorGUI extends javax.swing.JFrame implements Action
     }//GEN-LAST:event_botonEnviarJugadaActionPerformed
 
     private void botonFinPartidaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonFinPartidaActionPerformed
-        disposeJuego();
+        dialogFinPartida.dispose();
     }//GEN-LAST:event_botonFinPartidaActionPerformed
 
-    private void mitemConectar1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mitemConectar1ActionPerformed
-        // TODO add your handling code here:
-        dialogInicio.dispose();
-        botonConectarActionPerformed(null);
-        this.setVisible(true);
-    }//GEN-LAST:event_mitemConectar1ActionPerformed
+    private void conectarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_conectarActionPerformed
+        
+        user = textoUsuarioConfig.getText();
+        if (! user.equals("")){
+            textoMensaje.setFocusable(true);
+            menuPartida.setEnabled(false);
+            
+            try {
+                socketChat = new Socket(hostChat, puertoChat); 
+                socketJuego = new Socket(hostJuego, puertoJuego); 
+                
+                ooutJuego = new ObjectOutputStream(socketJuego.getOutputStream());
+                
+                doutChat = new DataOutputStream(socketChat.getOutputStream());
+                dinChat = new DataInputStream(socketChat.getInputStream());
+                              
+            } catch (IOException | IllegalArgumentException | NullPointerException ex) {
+                manejaExcepcion(ex, ex.toString());
+            }
+            
+            leeChat = new ClienteChatHilo(dinChat, areaChat);
+            leeChat.start();
+            
+            hiloJuego = new OsoGameHilo(socketJuego);
+            hiloJuego.start();
+            
+            
+            try {
+                doutChat.writeUTF("Usuario "+ user+ " conectado");
+            } catch (IOException ex) {
+                Logger.getLogger(OsoGameMultijugadorGUI.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            
+        }
+        else {
+            JOptionPane.showMessageDialog(this, "Introduce un usuario valido\n"
+                    + "en el apartado de configuracion!", "Usuario", JOptionPane.WARNING_MESSAGE);
+        }
+    }//GEN-LAST:event_conectarActionPerformed
 
-    private void mitemConfig1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mitemConfig1ActionPerformed
-       
-        dialogConfig.setLocationRelativeTo(dialogInicio);
+    private void configActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_configActionPerformed
+        dialogConfig.setLocationRelativeTo(this);
         dialogConfig.setVisible(true);
-    }//GEN-LAST:event_mitemConfig1ActionPerformed
+    }//GEN-LAST:event_configActionPerformed
 
     /**
      * @param args the command line arguments
@@ -580,18 +526,17 @@ public class OsoGameMultijugadorGUI extends javax.swing.JFrame implements Action
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(() -> {
-            new OsoGameMultijugadorGUI();
+            new OsoGameMultijugadorGUI().setVisible(true);
         });
     }
     
-    private void leeInformacionInicial() {
+    private void leeInformacionInicial(ObjectInputStream oinJuego) {
         try {
             idJugador = oinJuego.readInt();
             estado = (EstadoJuego) oinJuego.readObject();
             
             filas = estado.getPartidaOso().getTablero().getFilas();
             columnas = estado.getPartidaOso().getTablero().getColumnas();
-            
             
             panelJuego.setLayout(new GridLayout(filas, columnas));
             
@@ -615,7 +560,7 @@ public class OsoGameMultijugadorGUI extends javax.swing.JFrame implements Action
             panelJuego.revalidate();
                         
         } catch (IOException | ClassNotFoundException ex) {
-            manejaExcepcion(ex);
+            manejaExcepcion(ex, ex.toString());
         }
     }
         
@@ -686,19 +631,6 @@ public class OsoGameMultijugadorGUI extends javax.swing.JFrame implements Action
         textoOsosRivales.setText(String.valueOf(ososRivales));
     }
     
-    public void manejaExcepcion(Exception ex) {
-        CustomExceptionHandler handler = new CustomExceptionHandler();
-        Logger.getLogger(ServerGameMultijugador.class.getName()).log(Level.SEVERE, null, ex);
-        handler.uncaughtException(Thread.currentThread(), ex);
-        disposeJuego();
-    }
-    
-    private void disposeJuego() {
-        dialogFinPartida.dispose();
-        dispose();
-        System.exit(0);
-    }
-    
     private void desbloqueaTablero(boolean unlock) {
         botonEnviarJugada.setEnabled(unlock);
         Component[] components = panelJuego.getComponents();
@@ -727,55 +659,52 @@ public class OsoGameMultijugadorGUI extends javax.swing.JFrame implements Action
         dialogFinPartida.setLocationRelativeTo(this);
         dialogFinPartida.setVisible(true);
     }
+    
+    public void manejaExcepcion(Exception ex, String infoAdicional) {
+        if (infoAdicional == null) {
+            Logger.getLogger(ServerGameMultijugador.class.getName()).log(Level.SEVERE, null, ex);
+            return;
+        }
+        CustomExceptionHandler handler = new CustomExceptionHandler(infoAdicional, this, JOptionPane.WARNING_MESSAGE);
+        handler.uncaughtException(Thread.currentThread(), ex);
+        disposeJuego();
+    }
+    
+    private void disposeJuego() {
+        dialogFinPartida.dispose();
+        dispose();
+        System.exit(0);
+    }
+    
+    public void guardaInformacion() {
+        user = textoUsuarioConfig.getText();
 
-    // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JTextArea areaChat;
-    private javax.swing.JButton botonConectar;
-    private javax.swing.JButton botonEnviarJugada;
-    private javax.swing.JButton botonEnviarMsg;
-    private javax.swing.JButton botonFinPartida;
-    private javax.swing.JDialog dialogConfig;
-    private javax.swing.JDialog dialogFinPartida;
-    private javax.swing.JDialog dialogInicio;
-    private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel jLabel3;
-    private javax.swing.JLabel jLabel4;
-    private javax.swing.JLabel jLabel5;
-    private javax.swing.JMenu jMenu2;
-    private javax.swing.JMenuBar jMenuBar2;
-    private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JLabel labelFinPartida;
-    private javax.swing.JLabel labelGanador;
-    private javax.swing.JLabel labelOsosPropios;
-    private javax.swing.JLabel labelOsosPropiosFin;
-    private javax.swing.JLabel labelOsosRivalFin;
-    private javax.swing.JLabel labelOsosRivales;
-    private javax.swing.JLabel labelUserConfig;
-    private javax.swing.JLabel labelUsuario;
-    private javax.swing.JMenuItem mitemConectar1;
-    private javax.swing.JMenuItem mitemConfig1;
-    private javax.swing.JPanel panelJuego;
-    private javax.swing.JTextField textPortChat;
-    private javax.swing.JTextField textPortOso;
-    private javax.swing.JTextField textSvChat;
-    private javax.swing.JTextField textSvOSO;
-    private javax.swing.JTextField textUsuarioConfig;
-    private javax.swing.JTextField textoMensaje;
-    private javax.swing.JTextField textoOsosPropios;
-    private javax.swing.JTextField textoOsosRivales;
-    private javax.swing.JTextField textoUsuario;
-    // End of variables declaration//GEN-END:variables
-   
+        hostJuego = textSvOSO.getText();
+        puertoJuego = Integer.parseInt(textPortOso.getText());
+
+        hostChat = textSvChat.getText();
+        puertoChat = Integer.parseInt(textPortChat.getText());
+    }
+    
     private class OsoGameHilo extends Thread {
 
-        private final ObjectInputStream objectIS;
+        private ObjectInputStream objectIS = null;
+        private final Socket socketJuego;
 
-        public OsoGameHilo(ObjectInputStream objectIS) {
-            this.objectIS = objectIS;
+        public OsoGameHilo(Socket socketJuego) {
+            this.socketJuego = socketJuego;
         }
 
         @Override
         public void run() {
+            try {
+                this.objectIS = new ObjectInputStream(socketJuego.getInputStream());
+            } catch (IOException ex) {
+                Logger.getLogger(OsoGameMultijugadorGUI.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            leeInformacionInicial(objectIS);
+            if (estado.getTurnoActual() == idJugador) 
+                desbloqueaTablero(true);
             
             //jugadas
             try {
@@ -794,11 +723,47 @@ public class OsoGameMultijugadorGUI extends javax.swing.JFrame implements Action
                 finalJuego(estado.getUltimaJugada());
                 
             } catch (IOException | ClassNotFoundException ex) {
-                manejaExcepcion(ex);
+                manejaExcepcion(ex, "Rival desconectado...");
             }
             
         }
     }
+
+    // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JTextArea areaChat;
+    private javax.swing.JButton botonEnviarJugada;
+    private javax.swing.JButton botonEnviarMsg;
+    private javax.swing.JButton botonFinPartida;
+    private javax.swing.JMenuItem conectar;
+    private javax.swing.JMenuItem config;
+    private javax.swing.JDialog dialogConfig;
+    private javax.swing.JDialog dialogFinPartida;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel5;
+    private javax.swing.JLabel jLabel8;
+    private javax.swing.JMenuBar jMenuBar3;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JLabel labelFinPartida;
+    private javax.swing.JLabel labelGanador;
+    private javax.swing.JLabel labelOsosPropios;
+    private javax.swing.JLabel labelOsosPropiosFin;
+    private javax.swing.JLabel labelOsosRivalFin;
+    private javax.swing.JLabel labelOsosRivales;
+    private javax.swing.JLabel labelUserConfig;
+    private javax.swing.JMenu menuPartida;
+    private javax.swing.JPanel panelJuego;
+    private javax.swing.JTextField textPortChat;
+    private javax.swing.JTextField textPortOso;
+    private javax.swing.JTextField textSvChat;
+    private javax.swing.JTextField textSvOSO;
+    private javax.swing.JTextField textoMensaje;
+    private javax.swing.JTextField textoOsosPropios;
+    private javax.swing.JTextField textoOsosRivales;
+    private javax.swing.JTextField textoUsuarioConfig;
+    // End of variables declaration//GEN-END:variables
+
 }
 
 

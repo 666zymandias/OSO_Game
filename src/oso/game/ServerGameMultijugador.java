@@ -79,8 +79,10 @@ public class ServerGameMultijugador extends Thread{
                     conexionesEsperando.clear();
                 }
                 
-            }
-        } catch (IOException | SecurityException | IllegalArgumentException | NullPointerException ex) {
+            }           
+        } 
+        
+        catch (IOException | SecurityException | IllegalArgumentException | NullPointerException ex) {
             Logger.getLogger(ServerGameMultijugador.class.getName()).log(Level.SEVERE, null, ex);
         }
         
