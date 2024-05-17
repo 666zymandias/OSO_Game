@@ -1,12 +1,26 @@
 package oso.utils;
-import javax.swing.JFrame;
+import java.awt.Component;
 import javax.swing.JOptionPane;
 
 public class CustomExceptionHandler implements Thread.UncaughtExceptionHandler {
-    private JFrame parent;
+
+    private final String info;
+    private String mensaje;
+    private final int tipoMensaje;
+    private final Component padre;
+    
+    public CustomExceptionHandler(String infoAdicional, Component padre, int tipo) {
+        this.info = infoAdicional;
+        this.padre = padre;
+        this.tipoMensaje = tipo;
+    }
     @Override
     public void uncaughtException(Thread t, Throwable e) {
-        JOptionPane.showMessageDialog(null, "Se ha producido un error:\n" + e.toString() + "\nAbortando cliente",
-                "Error Cliente OSO", JOptionPane.ERROR_MESSAGE);
+        if (info != null)
+            mensaje = info;
+        else
+            mensaje = e.toString();
+        
+        JOptionPane.showMessageDialog(padre, mensaje + "\nAbortando cliente...", "Aviso", tipoMensaje);
     }
 }

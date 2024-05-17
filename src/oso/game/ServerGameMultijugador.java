@@ -4,10 +4,10 @@
  */
 package oso.game;
 
-import java.io.EOFException;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.ArrayList;
 import java.util.InputMismatchException;
 import java.util.LinkedList;
 import java.util.List;
@@ -30,13 +30,12 @@ public class ServerGameMultijugador extends Thread{
     private final int filas;
     private final int columnas;
     
-    final List<ServerJuegoHilo> clientes = new LinkedList<>();
+    private final List<Socket> conexionesEsperando = new ArrayList<>();
     private EstadoJuego estadoJuego;
     
     public static void main(String[] args) {
-        
+        System.out.println("Introduce las medidas que tendrán los tableros de las partidas OSO:");
         ServerGameMultijugador server = new ServerGameMultijugador(getFilas(), getColumnas());
-        
         server.start();
     }
 
@@ -47,36 +46,58 @@ public class ServerGameMultijugador extends Thread{
     
     @Override
     public void run() {
-        int jugador = 0;
         System.out.println("Tableros de juego de "+filas+"x"+columnas);
+        System.out.println("");
         
         ServerChat serverChat = new ServerChat(puertoChat);
         serverChat.start();
-        
-        estadoJuego = new EstadoJuego(filas, columnas, jugador, 0);
         
         try {
             
             ServerSocket serverSocket = new ServerSocket(puertoJuego);
             
             System.out.println("Servidor juego del OSO iniciado en puerto: " + puertoJuego);
+            System.out.println("");
             
             while (! interrupted()) {
                 
-                if (estadoJuego.getTotalJugadores() < 2) {
-                    Socket clientSocket = serverSocket.accept();
-                    
-                    ServerJuegoHilo clientThread = new ServerJuegoHilo(clientes, clientSocket, jugador, estadoJuego);
-                    clientThread.start();
-                    
-                    jugador ++;
-                    estadoJuego.aumentaJugadoresEn1();
+                Socket clientSocket = serverSocket.accept();
+                System.out.println("Nueva conexion a juego desde " + 
+                    clientSocket.getInetAddress() + " : " + clientSocket.getPort());
+                
+                conexionesEsperando.add(clientSocket);
+                
+                if (conexionesEsperando.size() == 2) {
+                    final List<ServerJuegoHilo> clientesActivos = new LinkedList<>();
+                    int jugador = 0;
+                    estadoJuego = new EstadoJuego(filas, columnas, jugador);
+                    for (Socket cliente : conexionesEsperando) {
+                        ServerJuegoHilo clientThread = new ServerJuegoHilo(clientesActivos, cliente, this, jugador, estadoJuego);
+                        clientThread.start();
+                        jugador ++;
+                    }
+                    conexionesEsperando.clear();
                 }
+                
             }
         } catch (IOException | SecurityException | IllegalArgumentException | NullPointerException ex) {
             Logger.getLogger(ServerGameMultijugador.class.getName()).log(Level.SEVERE, null, ex);
         }
         
+    }
+    
+    public synchronized void cancelarPartida(List<ServerJuegoHilo> clientesActivos) {
+        for (ServerJuegoHilo cliente : clientesActivos) {
+            cliente.cerrarConexion();
+        }
+        clientesActivos.clear();
+    }
+
+    public void clienteDesconectado(ServerJuegoHilo cliente) {
+        synchronized (cliente.getClientesActivos()) {
+            cliente.getClientesActivos().remove(cliente);
+            cancelarPartida(cliente.getClientesActivos());
+        }
     }
     
     public static int getFilas() {
@@ -86,7 +107,7 @@ public class ServerGameMultijugador extends Thread{
         int filas = 0;
         while (!entradaValida) {
             try {
-                System.out.println("Introduce el numero de filas: ");
+                System.out.println("Numero de filas: ");
                 filas = sc.nextInt();
                 if (filas > 2)
                     entradaValida = true; 
@@ -103,7 +124,7 @@ public class ServerGameMultijugador extends Thread{
         boolean entradaValida = false;
         while (!entradaValida) {
             try {
-                System.out.println("Introduce el numero de columnas: ");
+                System.out.println("Numero de columnas: ");
                 columnas = sc.nextInt();
                 if (columnas > 2)
                     entradaValida = true; 

@@ -31,7 +31,7 @@ public class ServerChatHilo extends Thread{
     public void run() {
         try {
             System.out.println("Conexion a chat desde " + 
-                    socket.getInetAddress() + ": " + socket.getPort());
+                    socket.getInetAddress() + " : " + socket.getPort());
 
             DataInputStream in = new DataInputStream(socket.getInputStream());
             out = new DataOutputStream(socket.getOutputStream());
@@ -57,6 +57,7 @@ public class ServerChatHilo extends Thread{
             } catch(IOException ex){
             }
             synchronized (clients) {
+                System.out.println("Cliente de chat desconectado desde " + socket.getInetAddress() +" : "+ socket.getPort());
                 clients.remove(this);
             }
         }

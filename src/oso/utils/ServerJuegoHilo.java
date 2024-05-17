@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
+import java.net.SocketException;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -13,18 +14,24 @@ import oso.core.Jugada;
 import oso.game.ServerGameMultijugador;
 
 public class ServerJuegoHilo extends Thread{
-    private final List<ServerJuegoHilo> clientes;
+    private final List<ServerJuegoHilo> clientesActivos;
     private final Socket socket;
     private ObjectInputStream in;
     private ObjectOutputStream out;
     private final int jugador;
     private final EstadoJuego estadoJuego;
+    private final ServerGameMultijugador servidor;
 
-    public ServerJuegoHilo(List<ServerJuegoHilo> clientes, Socket socket, int jugador, EstadoJuego estadoJuego) {
-        this.clientes = clientes;
+    public ServerJuegoHilo(List<ServerJuegoHilo> clientes, Socket socket, ServerGameMultijugador servidor, int jugador, EstadoJuego estadoJuego) {
+        this.clientesActivos = clientes;
         this.socket = socket;
         this.jugador = jugador;
         this.estadoJuego = estadoJuego;
+        this.servidor = servidor;
+    }
+
+    public List<ServerJuegoHilo> getClientesActivos() {
+        return clientesActivos;
     }
 
     synchronized public void sendEstado(EstadoJuego estado) {
@@ -50,12 +57,9 @@ public class ServerJuegoHilo extends Thread{
         try {
             in = new ObjectInputStream(socket.getInputStream());
             out = new ObjectOutputStream(socket.getOutputStream());
-
-            System.out.println("Conexion con cliente (" +jugador+ ") a juego desde " + 
-                    socket.getInetAddress() + ": " + socket.getPort());
-           
-            synchronized (clientes) { 
-                clientes.add(this);
+            
+            synchronized (clientesActivos) { 
+                clientesActivos.add(this);
             }
             
             sendInformacionInicial();
@@ -66,8 +70,8 @@ public class ServerJuegoHilo extends Thread{
                 try {
                     Jugada jugada = (Jugada) inputJugada;
 
-                    synchronized (clientes) {
-                        clientes.forEach(c -> c.sendJugada(jugada));
+                    synchronized (clientesActivos) {
+                        clientesActivos.forEach(c -> c.sendJugada(jugada));
                     }
 
                 }catch (Exception ex) {
@@ -75,18 +79,15 @@ public class ServerJuegoHilo extends Thread{
                 }
             }
             
-        }catch (EOFException ex) {
-            Logger.getLogger(ServerGameMultijugador.class.getName()).log(Level.SEVERE, null, ex);
+        }catch (SocketException ex) {
+        }
+        catch (EOFException ex) {
+            System.out.println("Cliente desconectado desde "+socket.getInetAddress() + " : " + socket.getPort());
         } catch (IOException | SecurityException | IllegalArgumentException | NullPointerException | ClassNotFoundException ex) {
             Logger.getLogger(ServerGameMultijugador.class.getName()).log(Level.SEVERE, null, ex);
         } finally {
-            try{ 
-                socket.close(); 
-            } catch(IOException ex){
-            }
-            synchronized (clientes) {
-                clientes.remove(this);
-            }
+            cerrarConexion();
+            servidor.clienteDesconectado(this);
         }
     }
 
@@ -100,5 +101,15 @@ public class ServerJuegoHilo extends Thread{
 
         sendEstado(estadoJuego);
 
+    }
+    
+    public void cerrarConexion() {
+        try {
+            if (socket != null && !socket.isClosed()) {
+                socket.close();
+            }
+        } catch (IOException ex) {
+            Logger.getLogger(ServerGameMultijugador.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 }
