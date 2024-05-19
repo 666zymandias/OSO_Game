@@ -1,6 +1,6 @@
 package oso.chat;
 
-import oso.utils.EscupeTextoHilo;
+import oso.chat.utils.EscupeTextoHilo;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;

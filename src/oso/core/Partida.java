@@ -29,6 +29,9 @@ public class Partida implements Serializable {
     
     public void imprimeEstadoPartida() {
         tableroOso.imprimeTablero();
+    }
+    
+    public void imprimeNumOsos() {
         System.out.println("Numero de OSOs: "+ totalOsos);
     }
         
@@ -56,6 +59,7 @@ public class Partida implements Serializable {
             tableroOso.ponPieza(jugada.getFila(), jugada.getColumna(), letra);
             totalOsos += tableroOso.contarOsosDesdeCasilla(x, y, letra);
             imprimeEstadoPartida();
+            imprimeNumOsos();
         }
         else
             System.out.println("Jugada invalida, pon tu pieza en una casilla libre!");

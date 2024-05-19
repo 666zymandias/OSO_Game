@@ -4,7 +4,7 @@
  */
 package oso.chat;
 
-import oso.utils.ClienteChatHilo;
+import oso.chat.utils.ClienteChatHilo;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;

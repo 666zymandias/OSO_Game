@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package oso.core;
 
 import java.io.Serializable;
@@ -14,6 +10,8 @@ public class Jugada implements Serializable{
     private char letra;
     private int jugador = -1;
     private String nombrePJ;
+    private String nombreGanador;
+    private boolean finalJuego;
     
     public Jugada(int fila, int columna, char letra) {
         this.fila = fila;
@@ -21,12 +19,13 @@ public class Jugada implements Serializable{
         this.letra = letra;
     }
     
-    public Jugada(int fila, int columna, char letra, int jugador, String nombrePJ) {
+    public Jugada(int fila, int columna, char letra, int jugador, String nombrePJ, boolean esFinal) {
         this.fila = fila;
         this.columna = columna;
         this.letra = letra;
         this.jugador = jugador;
         this.nombrePJ = nombrePJ;
+        this.finalJuego = esFinal;
     }
 
     public int getFila() {
@@ -60,6 +59,23 @@ public class Jugada implements Serializable{
     public String getNombrePJ() {
         return nombrePJ;
     }
+
+    public boolean isEsFinalPartida() {
+        return finalJuego;
+    }
+
+    public void setFinalPartida() {
+        this.finalJuego = true;
+    }
+
+    public String getNombreGanador() {
+        return nombreGanador;
+    }
+
+    public void setNombreGanador(String nombreGanador) {
+        this.nombreGanador = nombreGanador;
+    }
+    
     
     @Override
     public String toString() {

@@ -81,7 +81,7 @@ public class Tablero implements Serializable{
         return osos;
     }
     
-    public void bloqueaJugada() {
+        public void bloqueaJugada() {
         for (Casilla casilla : casillasJugada) {
             casilla.setValida(false);
         }
